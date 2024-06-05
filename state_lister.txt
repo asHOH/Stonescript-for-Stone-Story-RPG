@@ -1,0 +1,135 @@
+/*
+Original code by incoherent_toast. He has given me a license. Thanks!
+List last several enemy states & times and track events including:
+  damage received
+  healing received
+  player debuffed
+  foe buffed
+*/
+
+/* ----------- tunable parameters ----------- */
+var max_list_length = 5
+var event_display_time = 90
+
+var check_damage  = true
+var check_healing = false
+var check_debuffs = true
+var check_foe_buffs= true
+
+var box_x = 1
+var box_y = 6
+
+/* ----------------- imports ---------------- */
+var s = import UserScript/s
+
+/* ------------ private variables ----------- */
+var state_list = []
+var state_list_text
+var cur_state_text
+var state_list_box
+var hp_and_armor_last_frame = s.hp_ + s.armor_
+var event_recorder = []
+var event_text
+var debuff_count_last_frame = 0
+var foe_buff_count_last_frame = 0
+var label
+
+func on_begin_or_loop()
+  event_recorder.Clear()
+  state_list_box = s.create_ui(s.add_panel(), box_x, box_y, 9)
+  state_list_box.h = 2 + max_list_length
+
+  label = s.create_ui(s.add_text(" State##Time\n"), -6, 0, 20)
+  label.align = center
+
+  state_list_text = s.create_ui(s.add_text(), 2, 2, 20)
+  state_list_text.align = left
+
+  cur_state_text =  s.create_ui(s.add_text(), 2, 1, 20)
+  cur_state_text.align = left
+
+  event_text =  s.create_ui(s.add_text(), 0, 2 + max_list_length, 99)
+  event_text.align = left
+
+  state_list_box.Add(label)
+  state_list_box.Add(state_list_text)
+  state_list_box.Add(cur_state_text)
+  state_list_box.Add(event_text)
+
+func draw()
+  ?check_damage
+    check_damage()
+  ?check_healing
+    check_healing()
+  ?check_debuffs
+    check_debuffs()
+  ?check_foe_buffs
+    check_foe_buffs()
+
+  ?state_list.Count()
+    ?s.foe_state ! state_list[0][0]
+      state_list.Insert(0,[s.foe_state, s.foe_time])
+      check_list_max()
+      update_text()
+    :?s.foe_time ! state_list[0][1]
+      state_list[0].Emplace(1, s.foe_time)
+      update_cur_state_text()
+  :?s.foe_distance < 28
+    state_list.Add([s.foe_state, s.foe_time])
+    update_text()
+
+  ?event_recorder.Count()
+    check_event_time()
+
+func check_damage()
+  var hp_and_armor = s.hp_ + s.armor_
+  ?hp_and_armor + 0.5 < hp_and_armor_last_frame
+    event_recorder.Add(["Got " + s.round_to_int(10*(hp_and_armor_last_frame - hp_and_armor))/10.0 + " damage at: ", s.foe_state, s.foe_time, s.total_time])
+    update_event_display()
+  hp_and_armor_last_frame = hp_and_armor
+
+func check_healing()
+  ?s.hp_ > s.hp_last_frame
+    event_recorder.Add(["Healed " + (s.hp_ - s.hp_last_frame) + " hp at: ", s.foe_state, s.foe_time, s.total_time])
+    update_event_display()
+
+func check_debuffs()
+  ?s.debuffs_count > debuff_count_last_frame
+    event_recorder.Add(["Got debuff at: ", s.foe_state, s.foe_time, s.total_time])
+    update_event_display()
+  debuff_count_last_frame = s.debuffs_count
+
+func check_foe_buffs()
+  ?s.foe_buff_count > foe_buff_count_last_frame
+    event_recorder.Add(["Foe got buff at: ", s.foe_state, s.foe_time, s.total_time])
+    update_event_display()
+  :?s.foe_buff_count < foe_buff_count_last_frame
+    event_recorder.Add(["Foe lost buff at: ", s.foe_state, s.foe_time, s.total_time])
+    update_event_display()
+  foe_buff_count_last_frame = s.foe_buff_count
+
+
+func update_text()
+  var temp_text = ""
+  ?state_list.Count() > 1
+    for i = 1..state_list.Count() - 1 // the first is not informative due to having cur_state_text
+      temp_text += s.pad_right(state_list[i][0], 2) + "," + state_list[i][1] + "\n"
+  state_list_text.text = temp_text
+
+func update_cur_state_text()
+  cur_state_text.text = s.pad_right(s.foe_state, 2) + "," + s.foe_time
+
+func update_event_display()
+  var temp_text = ""
+  for a : event_recorder
+    temp_text += a[0] + a[1] + ":" + a[2] + "\n"
+  event_text.text = temp_text
+
+func check_event_time()
+  ?event_recorder[0][3] + event_display_time < s.total_time
+    event_recorder.RemoveAt(0)
+    update_event_display()
+
+func check_list_max()
+  ?state_list.Count() > max_list_length
+    state_list.RemoveAt(max_list_length)

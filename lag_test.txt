@@ -1,0 +1,714 @@
+/*
+Original code by MaxMinMedian. He said it's cool to use this with a shout-out. Thanks!
+
+LagTestBed v2.1
+Usage:
+  import UserScript/lag_test in the in-game mindstone UI.
+  Remember to comment the existing "import UserScript/all".
+  - test[...]: which functions to run.
+    'base' time should be subtracted from all other times.
+  - test_duration: number of in-game frames each test runs for.
+  - iterations: # of iterations in the for loop.
+    (keep within 10000, or the game will terminate the loop early).
+
+Note: test_duration × iterations determines the time required for a test.
+  A longer test is generally more accurate. Also, try to make
+  iterations large while keeping within 10000. E.g.
+  test_duration = 24, iterations = 1000 (not good)
+  test_duration =  3, iterations = 8000 (better)
+*/
+/* ------------ CHANGE STUFF HERE ----------- */
+
+var s = import UserScript/s
+var tests = [call_func, call_func_from_import, call_var, call_var_from_import]
+var test_duration = 5
+var iterations = 8000
+
+/* ----------- functions for tests ---------- */
+
+var lag_test2 = import UserScript/lag_test2
+var test_var = 0
+
+func call_func()  // 100 calls to an empty function
+  for i = 1.. iterations
+    ?false
+      >this won't print
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+    doNothing()
+
+
+func call_func_from_import()  // 100 calls to an empty immported function
+  for i = 1.. iterations
+    ?false
+      >this won't print
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+    lag_test2.doNothing()
+
+
+func call_var()  // 100 calls to a variable
+  for i = 1.. iterations
+    ?false
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+    ?test_var = 1
+      >this won't print
+
+
+func call_var_from_import()  // 100 calls to a imported variable
+  for i = 1.. iterations
+    ?false
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+    ?lag_test2.test_var = 1
+      >this won't print
+
+
+func doNothing()
+  ?false
+    >this won't print
+
+
+
+/* ---------------- variables --------------- */
+var start_time
+var end_frame
+var base_tested = false
+var do_something = start_test
+var display_y = 10
+var results = []
+
+var r = [1,2,3,4,5]
+var s = 0
+var r1 = 1
+var r2 = 2
+var r3 = 3
+var r4 = 4
+var r5 = 5
+
+/* ------------------ body ------------------ */
+do_something()
+check_if_done()
+
+/* ---------------- framework --------------- */
+func start_test()
+  ?!tests.Count()
+    do_something = endTesting
+  :?time >= 3
+    ?base_tested
+      tests.Insert(0, base)
+      base_tested = true
+    do_something = tests.RemoveAt(0)
+    >Now testing: @do_something@
+    start_time = time.msbn
+    end_frame = time + test_duration
+
+func check_if_done()
+  ?time = end_frame
+    var result =  (time.msbn).Sub(start_time)
+    results.Add([do_something,result])
+    do_something = start_test
+
+func endTesting()
+  do_something = start_test
+  for i = 0 .. results.Count()-1
+    var p1 = results[i][0]
+    var p2 = results[i][1]
+    >`20,@display_y+i@,#yellow,@p1@: @p2@
+  loc.Pause()
+
+/* -------------- base function ------------- */
+func base()
+// acts as a control
+  for i = 1.. iterations
+    ?false
+      >this won't print

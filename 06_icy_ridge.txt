@@ -1,0 +1,46 @@
+/* ----------- Level 6: Icy Ridge ----------- */
+
+var util = import UserScript/util
+var s = import UserScript/s
+
+?s.loc_ = "icy_ridge"
+  util.eq.element = "fire"
+
+  var fighting_boss = false
+  ?s.total_time = 1
+    fighting_boss = false
+  // Boss
+  ?s.foe_ = "boss"
+    fighting_boss = true
+    ?s.loc_stars <= 5
+      ?s.foe_distance <= 2
+        util.mmelee_strategy()
+      :?s.foe_distance <= 5
+        // Shovel has range of 1, so avoids snowball attacks
+        equip shovel
+      :
+        util.try_quarter_dashing()
+        util.try_dashing()
+    :
+      ?s.foe_distance <= 10
+        util.mmelee_strategy()
+      :
+        util.try_quarter_dashing()
+        util.try_dashing()
+  
+  // Non-boss or ice pillar in boss fight
+  :
+    ?(s.foe_ = "ice_elemental" & s.foe_ ! "ice_elemental_elite") | s.foe_ = "ice_elemental_elite" | s.foe_ = "ki"
+      util.rranged_strategy()
+    :?s.foe_ = "ice_pillar" | s.foe_ = "ice_wall"
+      ?!fighting_boss
+        util.mmelee_strategy()
+      :
+        ?s.foe_distance <= 11
+          util.eq.blade_no_R()
+        : 
+          util.try_quarter_dashing()
+          util.try_dashing()
+    :?s.foe_
+      util.report_unknown_foe()
+

@@ -1,0 +1,19 @@
+/* ------------- Level 7: Temple ------------ */
+
+var util = import UserScript/util
+var s = import UserScript/s
+
+?s.loc_ = "temple"
+
+  // Boss room: ?loc = nagaraja
+  // Boss
+  ?s.foe_ = "boss"
+    ?debuffs.count >= 4
+      util.poisoning_boss_strategy()
+    :
+      util.ranged_boss_strategy()
+  :
+    ?s.foe_ = "serpent_handler" | s.foe_ = "flying_serpent" | s.foe_ = "ground_serpent" | s.foe_ = "cult_marksman" | s.foe_ = "heavy_hitter" | s.foe_ = "cult_guard" | s.foe_ = "cult_sorcerer" | s.foe_ = "worm_rider" | s.foe_ = "poison_adept"
+      util.rranged_strategy()
+    :?s.foe_
+      util.report_unknown_foe()

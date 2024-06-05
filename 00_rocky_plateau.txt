@@ -1,0 +1,150 @@
+/* --------- Level 0: Rocky plateau --------- */
+
+var eq = import UserScript/eq
+var util = import UserScript/util
+var s = import UserScript/s
+
+?s.loc_ = "rocky"
+  util.harvest_on = false
+
+  /* Phase 1: Attack with fire. Apply debuffs.
+  Phase 2: Double dmg from weakness element, so prepare weapons of every element. When it uses vigor attack, it applies a buff that resist debuffs.
+  phase 3: Mind stone when it shields or uses orbital laser. Weak to all elements but gains resistance buff each time it shields.
+  */
+  // ?s.foe_ = "phase1"
+  //   util.melee_strategy()
+
+  // :?s.foe_ = "phase2"   // elemental form
+  //   util.inspect_weakness()
+  //   util.melee_strategy()
+
+  // :?s.foe_ = "phase3"   // perfect form, 
+  //   util.melee_strategy()
+  //   util.potion_threshold = foe.damage
+    // ?s.foe_state = 115 & foe.time >= 60 & util.cd("mind") <= 0
+    //   equipL mind
+    // ?count % 5 = 3 & ?s.foe_state = 32 & foe.time >= 67 & util.cd("mind") <= 0
+    //   equipL mind
+
+  var timer = new UserScript/timer
+  var boss_atk_counter = new UserScript/timer
+  ?s.total_time = 1
+    timer.close()
+    boss_atk_counter.set(3)
+    // brew bronze + wood // berserk
+  // ?s.pos_x = 121 & s.total_time < 400 & s.foe_state = 127 & s.foe_time >= 30 & s.foe_time <= 55
+  //   eq.bardiche(true)
+  ?s.foe_distance > 16
+    util.walk()
+  :?timer.at(0) | !util.try_dashing() // timer 0 is themoment after dodging. dashing straightly in can be dangerous.
+    ?s.foe_distance < 11
+      ?s.foe_ = "phase1"        
+        phase1()
+      :?s.foe_ = "phase2"
+        phase2()
+      :?s.foe_ = "phase3"
+        phase3()
+      :
+        scout()
+    
+func phase3()
+  inspect_weakness_phase3()
+  >`0,17,@timer.t@
+  >`0,18,boss_atk_counter@boss_atk_counter.t@
+  // determines when to dodge
+  ?s.foe_state = 115 // satellite
+    ?s.foe_time = 0
+      timer.set(78)
+    boss_atk_counter.set(3)
+  :?s.foe_state = 32
+    ?s.foe_time = 0
+      boss_atk_counter.update()
+    ?boss_atk_counter.at(1) // shield
+      ?s.foe_time = 0
+        timer.set(70)
+  :?s.foe_state_at(33, 25)
+      timer.close()
+  timer.update()
+  
+  // action: dodge or attack
+  ?timer.at(1)
+    util.try_dodging()
+  :?!util.try_bardiche()
+    ?s.foe_has_armor
+      eq.L(eq.fire_hammer) // best hammer
+      R_debuff_weapon()
+    :
+      eq.L_sword()
+      inspect_another_weakness_phase3()
+      ?!R_debuff_weapon()
+        eq.R_sword()
+
+func phase1()
+  eq.element = "fire"
+  ?!util.try_bardiche()
+    eq.L_sword()
+    ?!R_debuff_weapon()
+      eq.R_sword2()
+
+func phase2()
+  util.inspect_weakness()
+  ?!util.try_bardiche()
+    eq.L_sword()
+    ?(s.foe_buff_string = "buff") | !R_debuff_weapon()
+      eq.R_sword2()
+
+func scout()
+  eq.element = "none"
+  ?!util.try_bardiche()
+    eq.L(eq.ice_sword) // highest dps sword
+    ?!R_debuff_weapon()
+      eq.R_sword()
+
+func R_debuff_weapon()
+  ?s.foe_debuff_F_time < 5
+    eq.R_sword_dF()
+    return true
+  ?s.foe_debuff_I_count < 6 | s.foe_debuff_I_time < 5
+    eq.R_sword_dI()
+    return true
+  ?(!s.foe_debuff_P) & (s.foe_ ! "phase3" | (s.foe_ = "phase3" & s.foe_state = 32 & s.foe_time >= 55))
+    eq.R_sword_dP()
+    return true
+  ?s.lost_hp >= 60
+    eq.R_sword_dL()
+    return true
+  ?s.foe_has_armor
+    eq.R(eq.poison_hammer) // second best hammer
+    return true
+  ?s.lost_hp >= 15
+    eq.R_sword_dL()
+    return true
+  return false
+
+func inspect_weakness_phase3()
+  // ∞>❄>φ>*>♥>∞
+  ?s.foe_buff_string ! "ice"
+    eq.element = "ice"
+  :?s.foe_buff_string ! "fire"
+    eq.element = "fire"
+  :?s.foe_buff_string ! "aether"
+    eq.element = "aether"
+  :?s.foe_buff_string ! "vigor"
+    eq.element = "vigor"
+  :
+    eq.element = "poison"
+  return eq.element
+
+func inspect_another_weakness_phase3()
+  // ∞>❄>φ>*>♥>∞
+  ?s.foe_buff_string ! "ice" & eq.element ! "ice"
+    eq.element = "ice"
+  :?s.foe_buff_string ! "fire" & eq.element ! "fire"
+    eq.element = "fire"
+  :?s.foe_buff_string ! "aether" & eq.element ! "aether"
+    eq.element = "aether"
+  :?s.foe_buff_string ! "vigor" & eq.element ! "vigor"
+    eq.element = "vigor"
+  :
+    eq.element = "poison"
+  return eq.element

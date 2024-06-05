@@ -1,0 +1,6 @@
+/* ------- test functions for lag_test ------ */
+func doNothing()
+  ?false
+    >this won't print
+
+var test_var = 0

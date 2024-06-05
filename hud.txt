@@ -1,0 +1,201 @@
+/*
+Original code by JCBoorgo. He said it's cool to use this with a shout-out. Thanks!
+Make a HUD and a healthbar
+*/
+
+/* ----------------- imports ---------------- */
+var palette = import UserScript/palette
+var s = import UserScript/s
+var state_lister = import UserScript/state_lister
+var printer = import UserScript/printer
+
+/* ------------ public variables ------------ */
+var show_potion_button = false // to modify, use util.hud.show_potion_button = true in the level scripts.
+var show_foe_state = true
+var show_foe_full_name = false
+var show_foe_distance = true
+var show_hp_lost = true
+var show_hud_text = true // turn off to see bug reports clearly
+
+var show_state_lister = true
+
+/* ------------ private variables ----------- */
+var _hud_on = true
+var _frame_per_loop = "?"
+var _hp_lost_per_loop = "?"
+
+/* ----------------- colors ----------------- */
+func _strategy_color(strategy)
+  ?strategy = "speed_farming"
+    return palette.green
+  ?strategy = "walk" | strategy = "shovel" | strategy = "hatchet"
+    return palette.gray
+  ?strategy = "mmelee"
+    return palette.orange
+  ?strategy = "rranged"
+    return palette.blue
+  ?strategy = "melee"
+    return palette.yellow
+  ?strategy = "ranged"
+    return palette.light_blue
+  ?strategy = "SLAY"
+    return palette.red
+  return palette.white
+
+func _eq_type_color(eq_type)
+  ?eq_type = "walk" | eq_type = "shovel" | eq_type = "hatchet"
+    return palette.gray
+  ?eq_type = "mmelee"
+    return palette.orange
+  ?eq_type = "rranged"
+    return palette.blue
+  ?eq_type = "melee"
+    return palette.yellow
+  ?eq_type = "ranged"
+    return palette.light_blue
+  ?eq_type = "armor_gen"
+    return palette.green
+  ?eq_type = "blade!!" | eq_type = "bardiche!!"
+    return palette.red
+  return palette.white
+
+func _info_color(info)
+  var tp = Type(info)
+  ?tp = "bool"
+    ?info
+      return palette.dark_green
+    return palette.dark_red
+  ?tp = "int" | tp = "float"
+    ?info > 0
+      return palette.light_gray
+    return palette.dark_red
+  ?tp = "null"
+    return palette.dark_gray
+  return palette.gray
+
+
+/* ------------- initialization ------------- */
+// run at loc.begin
+func init()
+  ?s.loc_ = "uulaa_shop" | s.loc_ = "undead_crypt_intro" | loc.isQuest
+    _hud_on = false
+  :
+    _hud_on = true
+  ?show_state_lister
+    state_lister.on_begin_or_loop()
+
+// run at loc.loop
+func on_loop()
+  _frame_per_loop = s.true_total_time / (s.loop_count - 1)
+  _hp_lost_per_loop = s.hp_lost_total / (s.loop_count - 1)
+  ?show_state_lister
+    state_lister.on_begin_or_loop()
+
+/* --------------- debug panel -------------- */
+// input: array of any size. Output is on the middle left of the screen.
+func debug(infos)
+  var indent = 0
+  ?show_state_lister
+    indent = 12
+  for i = 0..infos.Count()-1
+    var info = infos[i]
+    printer.print(indent, 6 + i, _info_color(info), info)
+
+/* -------------- draw function ------------- */
+func draw(strategy, eq_type)
+  ?!_hud_on
+    return
+  draw_hud(strategy, eq_type)
+  draw_healthbar()
+  ?show_state_lister
+    state_lister.draw()
+
+/* ------------------- hud ------------------ */
+func draw_hud(strategy, eq_type)
+  s.draw_BG(0,1,palette.ddark_gray,s.screen_w,5)
+
+  var indent = 0
+  ?show_potion_button
+    indent = 9
+  
+  var line1 = []
+  var line2 = []
+  var line3 = []
+  var line4 = []
+  var line5 = []
+
+  line1.Add([palette.yellow, s.loc_name+" "+s.loc_stars+"☆ ", 16])
+
+  ?s.all_foe_count > 0
+    ?show_foe_distance
+      var foe_distance_text = s.foe_distance
+      ?s.foe_distance > 999
+        foe_distance_text = " ∞"
+      line2.Add([palette.orange, s.all_foe_count, 3])
+      line2.Add([palette.orange, "foes "])
+      line2.Add([palette.orange, foe_distance_text, 3])
+      line2.Add([palette.orange, "away"])
+
+    ?show_foe_state
+      ?show_foe_distance
+        line2.Add([palette.white, ","])
+      line2.Add([palette.orange, "state("])
+      line2.Add([palette.orange, s.foe_state, 3])
+      line2.Add([palette.orange, ","])
+      line2.Add([palette.orange, s.foe_time, 3])
+      line2.Add([palette.orange, ") "])
+
+    ?show_foe_full_name
+      var foe_infos = s.str_break(s.foe_, s.screen_w - 17 - indent)
+      line1.Add([palette.red, foe_infos[0]])
+      ?foe_infos.Count() > 1
+        line2.Add([palette.red, " " + foe_infos[1]])
+    :
+      line1.Add([palette.red, s.str_split(s.foe_)[0]])
+  : // no foe
+    line2.Add([palette.orange, "", 16])
+
+  line3.Add([_strategy_color(strategy), strategy, 16])
+  line3.Add([_eq_type_color(eq_type), eq_type, 16])
+
+  ?s.is_first_trial // no need to show hp lost or best time etc.
+    line4.Add([palette.white, "Frames: ", 15])
+    line4.Add([])
+    line4.Add([palette.white, s.true_total_time, 5])
+  :
+    line4.Add([palette.white, "Avg./Best time: ", 16])
+    line4.Add([palette.white, s.avg_time, 5])
+    line4.Add([palette.white, "/"])
+    ?s.new_best
+      line4.Add([palette.green, s.best_time, 5])
+      line4.Add([palette.white, "(-" + (s.initial_best_time - s.best_time) + ")"])
+    :
+      line4.Add([palette.white, s.best_time, 5])
+    line5.Add([palette.cyan, "loop/now  time: ", 16])
+    line5.Add([palette.cyan, _frame_per_loop, 5])
+    line5.Add([palette.cyan, "/"])
+    line5.Add([palette.cyan, s.total_time, 5])
+    ?show_hp_lost
+      line5.Add([palette.red, " Avg.HP lost/now: ", 16])
+      line5.Add([palette.red, _hp_lost_per_loop, 2])
+      line5.Add([palette.red, "/"])
+      line5.Add([palette.red, s.max(s.hp_last_loop - s.hp_, 0), 2])
+
+  ?show_hud_text
+    printer.print_lines(indent, 1, [line1, line2, line3, line4, line5])
+
+/* ---------------- healthbar --------------- */
+func draw_healthbar()
+  var healthbar = "HP ["
+  var hp_per_tick = (0.0+s.maxhp_) / 10
+  for i = 1..10
+    ?s.hp_ >= hp_per_tick * i
+      healthbar += "█"
+    :?s.hp_ >= hp_per_tick * (i - 0.5)
+      healthbar += "▒"
+      break
+    :
+      break
+  healthbar = s.pad_right(healthbar, 14)
+  healthbar += "]"
+  printer.print(0, s.screen_h - 2, s.color_lerp(palette.dark_red, palette.dark_green, (0.0+s.hp_) / s.maxhp_), healthbar)

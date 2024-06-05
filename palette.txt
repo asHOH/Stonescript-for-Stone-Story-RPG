@@ -1,0 +1,40 @@
+/* ------------- Various colors ------------- */
+
+var gray = #999999
+var light_gray = #BBBBBB
+var dark_gray = #666666
+var ddark_gray = #222222
+var grey = #999999
+var light_grey = #BBBBBB
+var dark_grey = #666666
+var ddark_grey = #222222
+
+var white = #FFFFFF
+var black = #000000
+
+var red = #FF2222
+var green = #22FF55
+var blue = #0055FF
+var yellow = #FFFF55
+var cyan = #00EEFF
+var magenta = #FF00FF
+
+var orange = #FFA500
+var pink = #FFC0CB
+var purple = #800080
+var brown = #A52A2A
+var violet = #EE82EE
+
+var dark_red = #AA0000
+var dark_green = #11AA22
+// var dark_blue = #0022AA // too dark
+var dark_yellow = #999900
+var dark_cyan = #009999
+var dark_magenta = #990099
+
+var light_red = #FF8888
+var light_green = #88FF88
+var light_blue = #8888FF
+var light_yellow = #FFFF88
+var light_cyan = #88FFFF
+var light_magenta = #FF88FF

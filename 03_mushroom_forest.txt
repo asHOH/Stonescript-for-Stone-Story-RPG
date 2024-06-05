@@ -1,0 +1,28 @@
+/* -------- Level 3: Mushroom Forest -------- */
+
+var util = import UserScript/util
+var s = import UserScript/s
+
+?s.loc_ = "forest"
+  util.eq.element = "poison"
+
+  // Boss room: ?loc = fungus_forest_boss  
+  // Boss
+  ?s.foe_ = "phase1"
+    util.mmelee_boss_strategy()
+  :?s.foe_ = "Morel" | s.foe_ = "Enoki"
+    ?s.foe_distance >= 11
+      // Morel's hand keeps you at distance 5
+      util.try_dashing()
+    :?s.foe_armor > 0
+      util.mmelee_boss_strategy()
+    :
+      util.mmelee_boss_strategy()
+
+  // Non-boss
+  :
+    ?s.foe_ = "collossal_snail" | s.foe_ = "epic_snail" | (s.foe_ = "ant" & s.foe_ ! "ant_hill") | s.foe_ = "ant_hill"
+      util.mmelee_strategy()
+    :?s.foe_
+      util.report_unknown_foe()
+

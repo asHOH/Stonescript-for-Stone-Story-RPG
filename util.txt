@@ -1,0 +1,348 @@
+/* ----------------- imports ---------------- */
+var eq = import UserScript/eq
+var hud = import UserScript/hud
+var s = import UserScript/s
+var mission = import UserScript/mission
+
+/* ---------------- variables --------------- */
+// public variables
+var quarter_on = true // turn off when you need to save cd for quarterstaff
+var dashing_on = true // turn off when dashing may cause danger
+var blade_on = true // turn off when farming easy stages (due to lengthy animation)
+var harvest_on = true // turn off when you don't want to harvest
+var autowalk_on = true // turn off when you are using special strategies when there is no enemy. updates to true frame-wise.
+var potion_threshold = 8 // when hp is below this, drink potion
+var slay_threshold = 112 // when foe.hp is below this, slay
+var bladeDS_threshold = 17 // when foe count >= this, activate the blade Double Screen
+var blade_threshold = 10 // when foe count >= this, activate the blade
+var melee_spl_threshold = 2 // when foe count nearby >= this, equip the splashing version of melee
+var ranged_spl_threshold = 3 // when foe count nearby >= this, equip the splashing version of ranged
+var talisman_element = "fire" // element to summon, "fire"/"aether"/"none"
+var timer = import UserScript/timer
+// timer for actions such as dodge
+
+// private variables
+var _bladeDS_timer = new UserScript/timer
+var _summon_timer = new UserScript/timer
+var _foe_count_last_frame = 0
+var _new_foe_counter = 0
+var _strategy = "none"
+var _has_summoned = false
+
+/* ------------ private functions ----------- */
+func _set_strategy(str)
+  _strategy = str
+
+// is true when foe is alone and can be slayed
+func _check_can_slay()
+  return s.foe_distance <= 23 & s.foe_distance > 0 & (!(s.foe_ = immune_to_physical)) & ((s.foe_count_within(29) = 1 & s.foe_hp_and_armor <= slay_threshold) | (s.foe_count_within(29) = 2 & s.foe_hp_and_armor <= slay_threshold / 3))
+
+
+/* ------------------ trys ------------------ */
+func try_quarter_dashing()
+  ?quarter_on & s.can_activate_now("quarterstaff")
+      eq.quarter_dash() // 5 distance
+      return true
+  return false
+
+func try_dashing()
+  //range is 11~16 inclusive
+  ?dashing_on & s.foe_distance >= 11 & s.foe_distance <= 16 & s.can_activate_now("dashing")
+    eq.dashing() // goes to distance 3 from the enemy
+    return true
+  return false
+
+func try_blading()
+  ?blade_on & s.all_foe_count >= bladeDS_threshold & s.can_activate_now("blade") & (s.relative_x < - 20| _bladeDS_timer.is_active())
+    bladeDS()
+    return true
+  :?blade_on & s.cur_screen_foe_count >= blade_threshold & s.can_activate_now("blade")
+    ?s.foe_distance < 10
+      eq.blade()
+      return true
+    :
+      try_quarter_dashing()
+      try_dashing()
+  return false
+
+func bladeDS()
+  ?!_bladeDS_timer.is_active()
+    s.screen_next()
+    _bladeDS_timer.set(20)
+  :
+    _bladeDS_timer.update() 
+    ?_bladeDS_timer.at(0)
+      eq.blade()
+      s.screen_reset_offset()
+    :
+      try_quarter_dashing()
+      try_dashing()
+
+// func try_armor_gen()
+//   ?_check_new_foe() & !(s.left_state = 2) & !(s.right_state = 2)
+//     eq.armor_gen()
+//     _reset_new_foe_counter()
+//     return true
+//   return false
+
+// big poison sword does not work well against many ants in mushroom forest due to not attacking (cancelled at foreswing) for unknown reason
+func try_splashing_mmelee()
+  ?s.foe_count_within(9) >= melee_spl_threshold | (eq.eq_type = "mmelee_spl" & s.right_state = 2)
+    eq.mmelee_spl()
+    return true
+  return false
+
+func try_splashing_rranged()
+  ?s.foe_count_within(25) >= ranged_spl_threshold | (eq.eq_type = "rranged_spl" & s.right_state = 2) | s.foe_ = "immune_to_physical" 
+    eq.rranged_spl()
+    return true
+  return false
+
+func try_smite_rranged() // apply debuffs when you have smite buffs
+  ?s.buffs_smite
+    eq.ddanged()
+    return true
+  return false
+
+func try_piercing()
+  ?s.foe_has_armor & s.foe_distance <= 7 & s.foe_distance > 0 & (eq.eq_type = "melee_prc" | s.right_state >= 3)
+    eq.melee_prc()
+    return true
+  return false
+
+func try_slaying()
+  ?_check_can_slay()
+    _set_strategy("SLAY")
+    ?!try_dashing()
+      ?s.foe_distance <= 10
+        eq.repeating()
+      :
+        walk()
+    return true
+  return false
+
+func try_bardiche()
+  ?(s.cd("bardiche") <= 0 | s.cd("bardiche") > 878) & ai_enabled & can_activate_item & !s.debuffs_chill & s.foe_count > 0 & s.foe_distance > 0 & s.foe_hp_and_armor > 200 & s.buffs_string ! "berserk"
+    eq.bardiche(true)
+    return true
+  return false
+
+func try_pickup()
+  ?s.has_pickup
+    eq.pick_up()
+    return true
+  return false
+
+func try_dodging()
+  ?s.can_activate_now("mind") // 15 distance back
+    _set_strategy("dodge")
+    eq.dodge()
+    return true
+  return false
+
+func try_summon()
+  ?talisman_element = "none" | (_has_summoned & !_summon_timer.is_active())
+    return false
+  :?talisman_element = "fire"
+    ?s.can_activate_now("fire_talisman") | _summon_timer.is_active()
+      ?!_has_summoned
+        _summon_timer.set(19)
+      eq.R_fire_talisman()
+      _has_summoned = true
+      return true
+  :?talisman_element = "aether"
+    ?s.can_activate_now("aether_talisman") | _summon_timer.is_active()
+      ?!_has_summoned
+        _summon_timer.set(19)
+      eq.R_aether_talisman()
+      _has_summoned = true
+      return true
+  return false
+
+/* --------------- strategies --------------- */
+func inspect_weakness()
+  // ∞>❄>φ>*>♥>∞
+  ?s.foe_ = "poison"
+    eq.element = "ice"
+  :?s.foe_ = "ice"
+    eq.element = "fire"
+  :?s.foe_ = "fire"
+    eq.element = "aether"
+  :?s.foe_ = "aether"
+    eq.element = "vigor"
+  :?s.foe_ = "vigor"
+    eq.element = "poison"
+  :
+    eq.element = "none"
+  return eq.element
+
+func mmelee_strategy()
+  _set_strategy("mmelee")
+  ?!(try_dashing() | try_blading() | try_splashing_mmelee() | try_piercing())
+    ?s.foe_distance <= 7
+      eq.mmelee()
+    :
+      walk()
+
+func rranged_strategy()
+  _set_strategy("rranged")
+  ?!(try_slaying() | try_blading() | try_smite_rranged() | try_splashing_rranged() | try_pickup())
+    eq.rranged()
+
+func mmixed_strategy()
+  ?s.foe_distance <= 7 & s.foe_distance > 0 & !_check_can_slay()
+    mmelee_strategy()
+  :
+    rranged_strategy()
+
+func poisoning_boss_strategy()
+  _set_strategy("poisoning_boss")
+  ?!try_dashing()
+    ?s.foe_distance <= 7
+      eq.bardiche(true)
+    :
+      walk()
+
+func mmelee_boss_strategy()
+  _set_strategy("mmelee_boss")
+  ?!(try_dashing() | try_piercing())
+    ?s.foe_distance <= 7
+      eq.mmelee()
+    :
+      walk()
+    
+func ranged_boss_strategy()
+  _set_strategy("ranged_boss")
+  ?!(try_slaying() | try_pickup())
+    eq.crossbow()
+
+func speed_farming_strategy()
+  _set_strategy("speed_farming")
+  ?!(try_dashing() | try_quarter_dashing())
+    ?s.foe_distance <= 10
+      eq.repeating()
+    :
+      walk()
+
+
+// walk forward
+func walk()
+  // try dashing on the first place
+  ?!_summon_timer.is_active() & try_quarter_dashing()
+    return
+  ?try_summon()
+    equipL triskelion
+    return
+
+  //right hand
+  ?s.has_pickup | (s.all_foe_count = 0 & s.pos_x > 200) // resource or chest
+    equipR star
+  :?s.foe_distance <= 10
+    eq.R_sword()
+  :?s.foe_distance <= 23
+    eq.R_shield_A()
+  :?s.armor_ <= 13 | (s.armor_ <= 15 & !s.ai_enabled)
+    eq.R_shield_regen()
+  :?s.armor_ <= 24 | (s.armor_ <= 26 & !s.ai_enabled)
+    eq.R_shield_maxarmor()
+  :
+    equipL triskelion
+    equipR ouroboros
+    return
+  
+  // left hand
+  ?s.is_walking & s.lost_hp < s.maxhp_ / 2
+    equipL triskelion // range 10
+  :?s.lost_hp > 0 & s.foe_distance > 18
+    equipL ouroboros // range 17
+  :?!s.ai_enabled
+    equipL quest
+  :
+    eq.L_sword()
+  
+
+// report unknown foe
+func report_unknown_foe()
+  >Unknown foe: @s.foe_@
+
+
+
+/* ---------- start frame functions --------- */
+// cancels backswing
+func _AAC()
+  ?s.left_state = 3
+    equipL wand 0* // trash
+    equipL @item.left@
+  ?s.right_state = 3
+    equipR shield 0* // trash
+    equip @item.right@
+
+func start_frame()
+  s.on_start_frame()
+  eq.on_start_frame()
+  _AAC()
+  autowalk_on = true
+
+/* ----------- end frame functions ---------- */
+func _init()
+  eq.shield_maxarmor() // get initial armor
+  hud.init()
+
+
+func _on_loop()
+  _reset_public_variables()
+  hud.on_loop()
+  _has_summoned = false
+
+
+func harvest_tree()
+  _set_strategy("hatchet")
+  eq.set_eq_type("hatchet")
+  equipR hatchet
+  ?!try_pickup()
+    ?harvest.distance < 5 & s.can_activate_now("hatchet")
+      activate R
+
+
+func harvest_boulder()
+  _set_strategy("shovel")
+  eq.set_eq_type("shovel")
+  equip shovel
+
+
+func _reset_public_variables()
+  quarter_on = true
+  dashing_on = true
+  blade_on = true
+  harvest_on = true
+  potion_threshold = 8
+  slay_threshold = 91
+  bladeDS_threshold = 17
+  blade_threshold = 10
+  melee_spl_threshold = 2
+  ranged_spl_threshold = 3
+
+
+// executed at the end of frame only in all.txt
+func end_frame()
+  ?harvest_on & harvest.distance < 7
+    ?harvest = "tree"
+      harvest_tree()
+    :?harvest = "Boulder"
+      harvest_boulder()
+  :?autowalk_on & (s.foe_distance > 22)
+    walk()
+    _set_strategy("walk")
+    eq.set_eq_type("walk")
+  ?s.hp_ <= potion_threshold
+    activate potion
+  ?s.loc_begin
+    _init()    
+  ?s.loc_loop
+    _on_loop() // TODO: not summon on loop
+  timer.update()
+  _summon_timer.update()
+  // mission.skeleton_arm()
+  // hud.show_potion_button = true
+  hud.draw(_strategy, eq.eq_type)
+  hud.debug([s.screen_x+" / "+s.pos_x, s.buffs_string, s.debuffs_string, s.foe_buff_string, s.foe_debuff_string, s.foe_debuff_I_time])

@@ -1,0 +1,47 @@
+/* --------- Level 2: Caves of fear --------- */
+
+var util = import UserScript/util
+var s = import UserScript/s
+var timer = import UserScript/timer
+
+?s.loc_ = "caves"
+  util.eq.element = "ice"
+  
+  // Boss
+  ?s.foe_ = "boss"
+    ?s.foe_ = "decorator"
+      util.ranged_boss_strategy()
+      ?s.foe_distance >= 17
+        util.walk() // make distance 16 so dashing shield can be used immediately. 17 is actally OK.
+      ?s.foe_state = 2
+        >@s.foe_distance@, @s.total_time@
+      ?s.foe_state = 33 & !timer.is_active() // set countdown
+        timer.set(30)
+      : // act based on countdown
+        ?timer.at(4)
+          ?util.try_dashing()
+            timer.close()
+          :?util.try_dodging()
+            timer.close()
+        :?timer.below(1) //difference of player location may affect the time
+          util.eq.R_shield_ah()
+    :
+      util.slay_threshold = 136
+      util.ranged_boss_strategy()
+      ?s.foe_state = 133 & (s.foe_time = 11 | s.foe_time = 16)
+        ?(s.foe_debuff_string ! "φ:") & s.foe_hp_and_armor > 300
+          util.eq.R_shield_af()
+        :
+          util.eq.R_shield_ah()
+
+
+  // Non-boss
+  :
+    ?s.loc_stars <= 5
+      util.blade_on = false
+      util.speed_farming_strategy()
+    :?s.foe_ = "biter" | s.foe_ = "peeler" | s.foe_ = "caviar" | s.foe_ = "licker" | s.foe_ = "warmer" | s.foe_ = "chopper"
+      util.mmixed_strategy()
+    :?s.foe_
+      util.report_unknown_foe()
+    

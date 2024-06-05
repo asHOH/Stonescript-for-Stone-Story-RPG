@@ -1,0 +1,26 @@
+var t = -1
+
+func set(x)
+  t = x
+
+func update()
+  ?t > -1
+    t--
+
+func hold()
+  t++
+
+func at(x)
+  return t = x
+
+func below(x)
+  return t >= 0 & t <= x
+
+func between(x, y)
+  return t >= x & t <= y
+
+func is_active()
+  return t >= 0
+
+func close()
+  t = -1

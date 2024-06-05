@@ -1,0 +1,12 @@
+// import fishing
+var util = import UserScript/util
+util.start_frame()
+import UserScript/00_rocky_plateau
+import UserScript/01_deadwood_canyon
+import UserScript/02_caves_of_fear
+import UserScript/03_mushroom_forest
+import UserScript/04_haunted_halls
+import UserScript/05_boiling_mine
+import UserScript/06_icy_ridge
+import UserScript/07_temple
+util.end_frame()

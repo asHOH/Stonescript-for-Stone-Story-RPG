@@ -1,0 +1,18 @@
+/* --------- Level 4: Haunted Halls --------- */
+
+var util = import UserScript/util
+var s = import UserScript/s
+
+?s.loc_ = "haunted"
+  util.eq.element = "vigor"
+
+  // Boss
+  ?s.foe_ = "phase1" | s.foe_ = "phase2"
+    util.rranged_strategy()
+
+  // Non-boss
+  :
+    ?(s.foe_ = "skeleton" & s.foe_ ! "large_skeleton") | s.foe_ = "large_skeleton" | (s.foe_ = "ghost" & s.foe_ ! "large_ghost" & s.foe_ ! "ghost_tomb") | s.foe_ = "large_ghost" | s.foe_ = "ghost_tomb" | s.foe_ = "decorator"
+      util.rranged_strategy()
+    :?s.foe_
+      util.report_unknown_foe()

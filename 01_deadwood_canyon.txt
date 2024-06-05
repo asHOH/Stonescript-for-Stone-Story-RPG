@@ -1,0 +1,26 @@
+/* -------- Level 1: Deadwood canyon -------- */
+
+var util = import UserScript/util
+var s = import UserScript/s
+
+?s.loc_ = "deadwood"
+  util.eq.element = "none"
+  util.harvest_on = false
+
+  // Boss
+  ?s.foe_ = "phase1"
+    ?s.loc_stars > 5
+      util.slay_threshold = 0
+    util.ranged_boss_strategy()
+  :?s.foe_ = "phase2"
+    util.mmelee_boss_strategy()
+  // Non-boss
+  :
+    ?s.foe_ = "huge_mosquito"
+      util.mixed_strategy()
+    :?s.foe_ = "flesh_scarab"
+      util.melee_strategy()
+    :?s.foe_
+      util.report_unknown_foe()
+
+
