@@ -6,6 +6,7 @@ The ASCII-art game [Stone Story RPG](https://store.steampowered.com/app/603390/S
 
 The scripts functions well for game version v3.61.4 as of 2024-06-05.
 
+
 ## Usage
 
 1. Clone this repository as a subfolder of the Stonescript directory called `UserScript`.
@@ -23,12 +24,13 @@ The scripts functions well for game version v3.61.4 as of 2024-06-05.
    git clone https://github.com/asHOH/StoneScript.git UserScript
    ```
 
-2. Copy-paste the content of the [main.txt](https://github.com/asHOH/StoneScript/blob/master/main.txt) ("import UserScript/all", simple as it is) into the in-game Mindstone UI.
+2. Copy-paste the content of the [main.txt](https://github.com/asHOH/StoneScript-for-Stone-Story-RPG/blob/master/main.txt) ("import UserScript/all", simple as it is) into the in-game Mindstone UI.
 
 3. Modify the scripts for your own playing. Enjoy!
 
 
 ## Useful information for the game
+
 1. Use the Power button at the top-right of the in-game Mind Stone UI to toggle the script ON/OFF. You may press M to open the mindstone while playing a level.
 
 2. Hold TAB for debug information while playing a level.
@@ -40,9 +42,15 @@ The scripts functions well for game version v3.61.4 as of 2024-06-05.
 5. For stonescript, I would recommend Microsoft VSCode with Stonescript extension for (somewhat) smooth development. Check the official guide if you encounter issues:
    - [Official intro to Stonescript](https://stonestoryrpg.com/stonescript/)
    - [Official full manual of Stonescript](https://stonestoryrpg.com/stonescript/manual.html)
-   - [more about Stonescript.md](https://github.com/asHOH/StoneScript/blob/master/more-about-Stonescript.md) in this project.
+   - [more about Stonescript.md](https://github.com/asHOH/StoneScript-for-Stone-Story-RPG/blob/master/more%20about%20Stonescript.md) in this project.
 
 6. Stone Story is awesome, but life is also awesome! Remember to spend time with your friends and family members, and enjoy the outdoors!
+
+
+## About this project
+
+A dependency plot is shown here. Unshown scripts are [**s.txt**](https://github.com/asHOH/StoneScript-for-Stone-Story-RPG/blob/master/s.txt), which stores system variables and functions and is imported into almost every module, and **00_rocky_plateau to 07_temple**, which are abbreviated to "levels" in the graph.
+![dependency_graph](dependency_graph.png)
 
 ## Acknowledgments
 

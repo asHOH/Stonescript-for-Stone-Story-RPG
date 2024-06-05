@@ -4,7 +4,7 @@ Original code by MaxMinMedian. He said it's cool to use this with a shout-out. T
 LagTestBed v2.1
 Usage:
   import UserScript/lag_test in the in-game mindstone UI.
-  Remember to comment the existing "import UserScript/all".
+  Remember to comment other existing code.
   - test[...]: which functions to run.
     'base' time should be subtracted from all other times.
   - test_duration: number of in-game frames each test runs for.
