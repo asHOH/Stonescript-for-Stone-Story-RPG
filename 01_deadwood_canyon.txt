@@ -6,6 +6,7 @@ var s = import UserScript/s
 ?s.loc_ = "deadwood"
   util.eq.element = "none"
   util.harvest_on = false
+  util.melee_spl_threshold = 99 // never try splashing
 
   // Boss
   ?s.foe_ = "phase1"
@@ -17,10 +18,8 @@ var s = import UserScript/s
   // Non-boss
   :
     ?s.foe_ = "huge_mosquito"
-      util.mixed_strategy()
+      util.mmixed_strategy()
     :?s.foe_ = "flesh_scarab"
-      util.melee_strategy()
+      util.mmelee_strategy()
     :?s.foe_
       util.report_unknown_foe()
-
-

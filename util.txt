@@ -11,7 +11,7 @@ var dashing_on = true // turn off when dashing may cause danger
 var blade_on = true // turn off when farming easy stages (due to lengthy animation)
 var harvest_on = true // turn off when you don't want to harvest
 var autowalk_on = true // turn off when you are using special strategies when there is no enemy. updates to true frame-wise.
-var potion_threshold = 8 // when hp is below this, drink potion
+var potion_threshold = 0 // when hp is below this, drink potion
 var slay_threshold = 112 // when foe.hp is below this, slay
 var bladeDS_threshold = 17 // when foe count >= this, activate the blade Double Screen
 var blade_threshold = 10 // when foe count >= this, activate the blade
@@ -264,6 +264,7 @@ func walk()
 // report unknown foe
 func report_unknown_foe()
   >Unknown foe: @s.foe_@
+  eq.mmelee()
 
 
 
@@ -315,7 +316,7 @@ func _reset_public_variables()
   dashing_on = true
   blade_on = true
   harvest_on = true
-  potion_threshold = 8
+  potion_threshold = 0
   slay_threshold = 91
   bladeDS_threshold = 17
   blade_threshold = 10

@@ -12,7 +12,7 @@ var printer = import UserScript/printer
 /* ------------ public variables ------------ */
 var show_potion_button = false // to modify, use util.hud.show_potion_button = true in the level scripts.
 var show_foe_state = true
-var show_foe_full_name = false
+var show_foe_full_name = true
 var show_foe_distance = true
 var show_hp_lost = true
 var show_hud_text = true // turn off to see bug reports clearly

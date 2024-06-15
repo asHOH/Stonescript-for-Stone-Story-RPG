@@ -29,7 +29,7 @@ var shield_ai = "" //"ice shield 10* ai" // slow when hit
 
 /* ----------------- swords ----------------- */
 var universal_sword = "vigor sword 10* dL" // universal sword for when you don't have a good sword
-var universal_sword2 = "ice sword 10* D" // backup universal sword
+var universal_sword2 = "ice sword 10* dI" // backup universal sword
 
 var poison_sword = "poison sword 10* D"
 var ice_sword = "ice sword 10* D"
@@ -71,20 +71,22 @@ func set_eq_type(type)
 
 func L(equipment)
   ?equipment & !(s.str_equals(equipment, right_hand))
-    equipL @equipment@
+    left_hand = equipment
   :?!(s.str_equals(equipment, universal_sword))
-    equipL @universal_sword@
+    left_hand = universal_sword
   :
-    equipL @universal_sword2@
+    left_hand = universal_sword2
+  equipL @left_hand@
 
 
 func R(equipment)
   ?equipment & !(s.str_equals(equipment, left_hand))
-    equipR @equipment@
+    right_hand = equipment
   :?!(s.str_equals(equipment, universal_sword))
-    equipR @universal_sword@
+    right_hand = universal_sword
   :
-    equipR @universal_sword2@
+    right_hand = universal_sword2
+  equipR @right_hand@
 
 
 /* -------------- normal shield ------------- */
@@ -248,11 +250,6 @@ func crossbow()
     equip @repeating_crossbow@
 
 /* ------------------ melee ----------------- */
-// splashing melee
-func melee_spl()
-  set_eq_type("melee_spl")
-  bardiche(false)
-
 // double melee
 func mmelee()
   set_eq_type("mmelee")
