@@ -11,9 +11,10 @@ var str_equals = string.Equals
 var int_parse = int.Parse
 var clamp = math.Clamp
 var round_to_int = math.RoundToInt
+var floor = math.FloorToInt
 var max = math.Max
 var color_lerp = color.Lerp
-var draw_BG = draw.Bg
+var draw_Bg = draw.Bg
 var screen_next = screen.Next
 var screen_reset_offset = screen.ResetOffset
 var add_panel = ui.AddPanel
@@ -36,7 +37,7 @@ var hp_lost_total = 0
 var best_time = initial_best_time
 var avg_time = loc.averageTime
 var new_best = false
-var potion = item.potion
+var current_potion = item.potion
 
 func on_loop()
   maxhp_ = maxhp
@@ -45,7 +46,7 @@ func on_loop()
   best_time = loc.bestTime
   avg_time = loc.averageTime
   new_best = (best_time < initial_best_time)
-  potion = item.potion
+  // current_potion = item.potion
 
 
 /* ------------- frame-wise var ------------- */
@@ -171,13 +172,9 @@ func on_start_frame()
     on_loop()
     loop_count++
 
+/* ----------- in-combat functions ---------- */
 func can_activate_now(item_name)
   return cd(item_name) <= 0 & ai_enabled & can_activate_item
-
-func activate_potion()
-  ?potion ! "empty"
-    activate potion
-    potion = "empty"
 
 func foe_state_at(s, t)
   return foe_state = s & foe_time = t
@@ -185,26 +182,65 @@ func foe_state_at(s, t)
 func foe_state_between(s, t1, t2)
   return foe_state = s & foe_time >= t1 & foe_time <= t2
 
-/* -------------- pad functions ------------- */
+func brew_potion(potion_name)
+  ?!loc_begin_or_loop
+    return false
+  ?potion_name = "experience"
+    brew wood
+  :?potion_name = "strength"
+    brew stone
+  :?potion_name = "healing"
+    brew tar
+  :?potion_name = "lightning"
+    brew bronze
+  :?potion_name = "defensive"
+    brew tar + stone
+  :?potion_name = "cleansing"
+    brew tar + wood
+  :?potion_name = "vampiric"
+    brew tar + bronze
+  :?potion_name = "invisibility"
+    brew stone + wood
+  :?potion_name = "lucky"
+    brew stone + bronze
+  :?potion_name = "berserk"
+    brew wood + bronze
+  :// if invalid potion is brewed you should get a warning here
+  current_potion = potion_name
+  return true
+
+func activate_potion()
+  ?current_potion ! "empty" & can_activate_item
+    activate potion
+    current_potion = "empty"
+    return true
+  return false
+
+
+/* ------------ string functions ------------ */
 func pad_left(str, l)
   str = str + ""
   var pad_len = l - size(str)
-  var pad = ""
-  ?pad_len > 0
-    for i = 1..pad_len
-      pad += " "
+  var pad = str_repeat(" ", pad_len)
   return pad + str
 
 
 func pad_right(str, l)
   str = str + ""
   var pad_len = l - size(str)
-  var pad = ""
-  ?pad_len > 0
-    for i = 1..pad_len
-      pad += " "
+  var pad = str_repeat(" ", pad_len)
   return str + pad
 
+func str_repeat(str, n)
+  ?n < 1
+    return ""
+  var result = ""
+  for i = 1..n
+    result += str
+  return result
+
+
+/* ------------- Other functions ------------ */
 func create_ui(UI, x, y, w)
   UI.x = x
   UI.y = y

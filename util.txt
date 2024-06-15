@@ -29,6 +29,7 @@ var _new_foe_counter = 0
 var _strategy = "none"
 var _has_summoned = false
 
+
 /* ------------ private functions ----------- */
 func _set_strategy(str)
   _strategy = str

@@ -3,27 +3,24 @@
 var eq = import UserScript/eq
 var util = import UserScript/util
 var s = import UserScript/s
+var permapot = true
 
 ?s.loc_ = "rocky"
   util.harvest_on = false
+  var mask_run = permapot & s.loop_count = 1
+  var post_mask_run = permapot & s.loop_count >= 2
+  ?permapot
+    s.brew_potion("lucky")
+  :
+    s.brew_potion("berserk")
 
-  /* Phase 1: Attack with fire. Apply debuffs.
-  Phase 2: Double dmg from weakness element, so prepare weapons of every element. When it uses vigor attack, it applies a buff that resist debuffs.
+  /* Phase 1: weakness element is fire. Apply debuffs.
+  Phase 2: Prepare weapons of every element. When it uses vigor attack, it resist debuffs.
   phase 3: Mind stone when it shields or uses orbital laser. Weak to all elements but gains resistance buff each time it shields.
   */
-  // ?s.foe_ = "phase1"
-  //   util.melee_strategy()
-
-  // :?s.foe_ = "phase2"   // elemental form
-  //   util.inspect_weakness()
-  //   util.melee_strategy()
-
-  // :?s.foe_ = "phase3"   // perfect form, 
-  //   util.melee_strategy()
-  //   util.potion_threshold = foe.damage
     // ?s.foe_state = 115 & foe.time >= 60 & util.cd("mind") <= 0
     //   equipL mind
-    // ?count % 5 = 3 & ?s.foe_state = 32 & foe.time >= 67 & util.cd("mind") <= 0
+    // :?count % 5 = 3 & ?s.foe_state = 32 & foe.time >= 67 & util.cd("mind") <= 0
     //   equipL mind
 
   var timer = new UserScript/timer
@@ -36,7 +33,7 @@ var s = import UserScript/s
   //   eq.bardiche(true)
   ?s.foe_distance > 16
     util.walk()
-  :?timer.at(0) | !util.try_dashing() // timer 0 is themoment after dodging. dashing straightly in can be dangerous.
+  :?timer.at(0) | !util.try_dashing() // timer 0 is the moment after dodging. dashing straightly can be dangerous.
     ?s.foe_distance < 11
       ?s.foe_ = "phase1"        
         phase1()
