@@ -15,17 +15,44 @@ func print_line(x, y, texts)
   for text : texts
     ?text.Count() = 0
       print(cur_x, y, "#white", " ")
-      cur_x += 1
+      cur_x++
     :?text.Count() = 2
       print(cur_x, y, text[0], text[1])
-      cur_x += s.size(text[1])
+      cur_x += s.str_size(text[1])
     :
       var padded_text = s.pad_right(text[1], text[2])
       print(cur_x, y, text[0], padded_text)
-      cur_x += s.size(padded_text)
+      cur_x += s.str_size(padded_text)
 
 func print_lines(x, y, textss)
   var cur_y = y
   for texts : textss
     print_line(x, cur_y, texts)
-    cur_y += 1
+    cur_y++
+
+
+func print_on_foe(x, y, text_color, text_content)
+  >f@x@,@y@,@text_color@,@text_content@
+
+func print_line_on_foe(x, y, texts)
+  ?texts.Count() = 0
+    return
+  
+  var cur_x = x
+  for text : texts
+    ?text.Count() = 0
+      print_on_foe(cur_x, y, "#white", " ")
+      cur_x++
+    :?text.Count() = 2
+      print_on_foe(cur_x, y, text[0], text[1])
+      cur_x += s.str_size(text[1])
+    :
+      var padded_text = s.pad_right(text[1], text[2])
+      print_on_foe(cur_x, y, text[0], padded_text)
+      cur_x += s.str_size(padded_text)
+
+func print_lines_on_foe(x, y, textss)
+  var cur_y = y
+  for texts : textss
+    print_line_on_foe(x, cur_y, texts)
+    cur_y++

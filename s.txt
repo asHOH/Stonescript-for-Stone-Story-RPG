@@ -4,7 +4,7 @@
 var cd = item.GetCooldown
 var can_activate = item.CanActivate
 var foe_count_within = foe.GetCount
-var size = string.Size
+var str_size = string.Size
 var str_break = string.Break
 var str_split = string.Split
 var str_equals = string.Equals
@@ -12,6 +12,7 @@ var int_parse = int.Parse
 var clamp = math.Clamp
 var round_to_int = math.RoundToInt
 var floor = math.FloorToInt
+var log = math.Log
 var max = math.Max
 var color_lerp = color.Lerp
 var draw_Bg = draw.Bg
@@ -77,8 +78,11 @@ var all_foe_count = 0
 var cur_screen_foe_count = 0
 var foe_distance = 0
 var foe_armor = 0
+var foe_hp = 0
 var foe_hp_and_armor = 0
 var foe_has_armor = false
+var foe_maxhp = 0
+var foe_maxarmor = 0
 var foe_state = 0
 var foe_time = 0
 var foe_buff_count = 0
@@ -130,8 +134,11 @@ func on_start_frame()
   cur_screen_foe_count = foe_count_within(36 - relative_x)
   foe_distance = foe.distance
   foe_armor = foe.armor
-  foe_hp_and_armor = foe.hp + foe_armor
+  foe_hp = foe.hp
+  foe_hp_and_armor = foe_hp + foe_armor
   foe_has_armor = foe_armor > 0
+  foe_maxhp = foe.maxhp
+  foe_maxarmor = foe.maxarmor
   foe_state = foe.state
   foe_time = foe.time
   foe_buff_count = foe.buffs.count
@@ -220,14 +227,14 @@ func activate_potion()
 /* ------------ string functions ------------ */
 func pad_left(str, l)
   str = str + ""
-  var pad_len = l - size(str)
+  var pad_len = l - str_size(str)
   var pad = str_repeat(" ", pad_len)
   return pad + str
 
 
 func pad_right(str, l)
   str = str + ""
-  var pad_len = l - size(str)
+  var pad_len = l - str_size(str)
   var pad = str_repeat(" ", pad_len)
   return str + pad
 
@@ -248,3 +255,17 @@ func create_ui(UI, x, y, w)
   UI.dock = top_left
   UI.anchor = top_left
   return UI
+
+func relu(num)
+  return max(num, 0)
+
+func create_healthbar(start_text, ticks, current, max, color_min, color_max, color_BG, end_text)
+  var healthbar = []
+  var full_ticks = (0.0+current)/max*ticks
+  var has_half_tick = round_to_int(full_ticks - floor(full_ticks))
+  var half_tick = str_repeat("▒", has_half_tick)
+  var color_current = color_lerp(color_min, color_max, (0.0+current)/max)
+  healthbar.Add([color_BG, start_text])
+  healthbar.Add([color_current, str_repeat("█", floor(full_ticks)) + half_tick, ticks])
+  healthbar.Add([color_BG, end_text])
+  return healthbar

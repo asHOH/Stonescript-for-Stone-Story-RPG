@@ -341,7 +341,7 @@ func end_frame()
   ?s.loc_begin
     _init()    
   ?s.loc_loop
-    _on_loop() // TODO: not summon on loop
+    _on_loop()
   timer.update()
   _summon_timer.update()
   // mission.skeleton_arm()

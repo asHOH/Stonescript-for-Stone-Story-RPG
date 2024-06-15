@@ -17,7 +17,10 @@ var show_foe_distance = true
 var show_hp_lost = true
 var show_hud_text = true // turn off to see bug reports clearly
 var show_state_lister = true
+
 var healthbar_ticks = 10
+var show_healthbar = true
+var show_enemy_healthbar = true
 
 /* ------------ private variables ----------- */
 var _hud_on = true
@@ -186,20 +189,19 @@ func draw_hud(strategy, eq_type)
 
 /* ---------------- healthbar --------------- */
 func draw_healthbar()
-  var healthbar = "HP   ["
-  var armorbar = "Armor["
-  var maxhp_float = 0.0+s.maxhp_
-  var hp_ticks = s.hp_ / maxhp_float * healthbar_ticks
-  var armor_ticks = s.armor_ / maxhp_float * healthbar_ticks
-  healthbar += s.str_repeat("█", s.floor(hp_ticks))
-  ?hp_ticks - s.floor(hp_ticks) >= 0.5
-    healthbar += "▒"
-  armorbar += s.str_repeat("█", s.floor(armor_ticks))
-  ?armor_ticks - s.floor(armor_ticks) >= 0.5
-    armorbar += "▒"
-  healthbar = s.pad_right(healthbar, healthbar_ticks + 6)
-  healthbar += "]"
-  armorbar = s.pad_right(armorbar, healthbar_ticks + 6)
-  armorbar += "]"
-  printer.print(0, s.screen_h - 2, s.color_lerp(palette.dark_red, palette.dark_green, (0.0+s.hp_) / s.maxhp_), healthbar)
-  printer.print(0, s.screen_h - 3, s.color_lerp(palette.blue, palette.violet, (0.0+s.armor_) / s.maxhp_), armorbar)
+  ?show_healthbar
+    var healthbar = s.create_healthbar("HP   [", healthbar_ticks, s.hp_, s.maxhp_, palette.dark_red, palette.dark_green, palette.gray, "]")
+    var armorbar = s.create_healthbar("Armor[", healthbar_ticks, s.armor_, s.maxhp_, palette.blue, palette.violet, palette.gray, "]")
+    printer.print_lines(0, s.screen_h - 3, [armorbar, healthbar])
+
+  ?(!s.foe_) | (!show_enemy_healthbar)
+    return
+  var enemy_healthbar_y = -4
+  var enemy_healthbar_ticks = s.max(2, s.floor(s.log(s.foe_maxhp, 2)) - 1)
+  var enemy_healthbar = s.create_healthbar("[", enemy_healthbar_ticks, s.foe_hp, s.foe_maxhp, palette.dark_red, palette.dark_green, palette.gray, "]")
+  var enemy_armorbar = s.create_healthbar("[", enemy_healthbar_ticks, s.foe_armor, s.foe_maxhp, palette.blue, palette.violet, palette.gray, "]")
+  ?s.foe_armor > 0
+    printer.print_lines_on_foe(0, enemy_healthbar_y - 1, [enemy_armorbar, enemy_healthbar])
+  :
+    printer.print_lines_on_foe(0, enemy_healthbar_y, [enemy_healthbar])
+  
