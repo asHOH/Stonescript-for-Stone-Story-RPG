@@ -65,7 +65,7 @@ func phase3()
   
   // action: dodge or attack
   ?timer.at(1)
-    util.try_dodging()
+    util.try_dodge()
   :?!util.try_bardiche()
     ?s.foe_has_armor
       eq.L(eq.fire_hammer) // best hammer

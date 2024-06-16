@@ -21,7 +21,7 @@ var timer = import UserScript/timer
         ?timer.at(4)
           ?util.try_dashing()
             timer.close()
-          :?util.try_dodging()
+          :?util.try_dodge()
             timer.close()
         :?timer.below(1) //difference of player location may affect the time
           util.eq.R_shield_ah()
