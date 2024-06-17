@@ -54,6 +54,7 @@ func on_loop()
 var ai_enabled = false
 var is_walking = false
 var can_activate_item = false
+var can_activate_or_using_bardiche = false
 var left_state = 0
 var right_state = 0
 var has_pickup = false
@@ -112,16 +113,18 @@ func on_start_frame()
   ai_enabled = ai.enabled & !(ai.paused)
   is_walking = ai.walking
   can_activate_item = can_activate()
+  can_activate_or_using_bardiche = (cd("bardiche") <= 0 | cd("bardiche") > 878) & ai_enabled & can_activate_item
   left_state = item.left.state
   right_state = item.right.state
   has_pickup = pickup.distance < 10
   pos_x = pos.x
   screen_x = screen.x
   relative_x = pos_x - screen_x
+
   hp_last_frame = hp_
   hp_ = hp
   lost_hp = maxhp_ - hp_
-  armor_ = armor + armor.f / 10.0
+  armor_ = relu(armor + armor.f / 10.0)
   buffs_count = buffs.count
   buffs_string = buffs.string
   buffs_smite = (buffs_string = "smite:")

@@ -30,6 +30,8 @@ var shield_ai = "" //"ice shield 10* ai" // slow when hit
 /* ----------------- swords ----------------- */
 var universal_sword = "vigor sword 10* dL" // universal sword for when you don't have a good sword
 var universal_sword2 = "ice sword 10* dI" // backup universal sword
+var best_sword = "ice sword 10* +17 D" // best DPS sword
+var best_sword2 = "fire sword 10* +17 D" // second best DPS sword
 
 var poison_sword = "poison sword 10* D"
 var ice_sword = "ice sword 10* D"
@@ -49,6 +51,9 @@ var sword_dI = "ice sword 10* dI"
 var sword_dF = "fire sword 10* dF"
 
 /* ----------------- hammers ---------------- */
+var best_hammer = "poison hammer 10* D" // best DPS hammer
+var best_hammer2 = "fire hammer 10* D" // second best DPS hammer
+
 var poison_hammer = "poison hammer 10* D"
 var ice_hammer = "" // "ice hammer 10* D"
 var fire_hammer = "fire hammer 10* D"
@@ -143,7 +148,7 @@ func L_sword()
   :?element = "vigor"
     L(vigor_sword)
   :
-    L(universal_sword)
+    L(best_sword)
 
 func R_sword()
   ?element = "poison"
@@ -157,7 +162,7 @@ func R_sword()
   :?element = "vigor"
     R(vigor_sword)
   :
-    R(universal_sword)
+    R(best_sword)
 
 func L_sword2()
   ?element = "poison"
@@ -307,7 +312,7 @@ func bardiche(use)
   equip bardiche *10
   ?use
     set_eq_type("bardiche!")
-    ?(s.cd("bardiche") <= 0 | s.cd("bardiche") > 878)
+    ?s.can_activate_or_using_bardiche
       set_eq_type("bardiche!!")
       activate R
   :
@@ -351,3 +356,7 @@ func dodge()
   set_eq_type("dodge")
   equipL mind
   equipR vigor shield *10 A
+
+
+func R_cultist()
+  R("cultist")

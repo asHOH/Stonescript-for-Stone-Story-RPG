@@ -9,7 +9,8 @@ var quarter_on = true // turn off when you need to save cd for quarterstaff
 var dashing_on = true // turn off when dashing may cause danger
 var blade_on = true // turn off when farming easy stages (due to lengthy animation)
 var harvest_on = true // turn off when you don't want to harvest
-var autowalk_on = true // turn off when you are using special strategies when there is no enemy. updates to true frame-wise.
+var autowalk_on = true // turn off when using special strategies when there is no enemy. Updates to true frame-wise.
+var cultist_walk_on = false // turn on when doing maskrun. Updates to true frame-wise.
 var potion_threshold = 0 // when hp is below this, drink potion
 var slay_threshold = 112 // when foe.hp is below this, slay
 var bladeDS_threshold = 17 // when foe count >= this, activate the blade Double Screen
@@ -114,7 +115,7 @@ func try_slay()
   return false
 
 func try_bardiche()
-  ?(s.cd("bardiche") <= 0 | s.cd("bardiche") > 878) & ai_enabled & can_activate_item & !s.debuffs_chill & s.foe_count > 0 & s.foe_distance > 0 & s.foe_hp_and_armor > 200 & s.buffs_string ! "berserk"
+  ?s.can_activate_or_using_bardiche & !s.debuffs_chill & s.foe_count > 0 & s.foe_distance > 0 & s.foe_hp_and_armor > 200 & s.buffs_string ! "berserk" & s.buffs_string ! "lucky"
     eq.bardiche(true)
     return true
   return false
@@ -257,11 +258,13 @@ func walk()
     return
 
   //right hand
-  ?s.has_pickup | (s.all_foe_count = 0 & s.pos_x > 200) // resource or chest
+  ?cultist_walk_on & s.buffs_string = "lucky"
+    eq.R_cultist()
+  :?s.has_pickup | (s.all_foe_count = 0 & s.pos_x > 200) // resource or chest
     equipR star
-  :?s.foe_distance <= 10
+  :?s.foe_distance <= 10 & s.ai_enabled
     eq.R_sword()
-  :?s.foe_distance <= 23
+  :?s.foe_distance <= 23 & s.ai_enabled
     eq.R_shield_A()
   :?s.armor_ <= 13 | (s.armor_ <= 15 & !s.ai_enabled)
     eq.R_shield_regen()
@@ -273,7 +276,9 @@ func walk()
     return
   
   // left hand
-  ?s.is_walking & s.lost_hp < s.maxhp_ / 2
+  ?cultist_walk_on & (s.has_pickup | (s.all_foe_count = 0 & s.pos_x > 200))
+    equipL star
+  :?s.is_walking & s.lost_hp < s.maxhp_ / 2
     equipL triskelion
   :?s.lost_hp > 0 & s.foe_distance > 18
     equipL ouroboros
@@ -282,7 +287,6 @@ func walk()
   :
     eq.L_sword()
   
-// report unknown foe
 func report_unknown_foe()
   >Unknown foe: @s.foe_@
   eq.mmelee()
@@ -303,6 +307,7 @@ func start_frame()
   eq.on_start_frame()
   _AAC()
   autowalk_on = true
+  cultist_walk_on = false
 
 /* ----------- end frame functions ---------- */
 func _init()
@@ -341,4 +346,4 @@ func end_frame()
   // mission.skeleton_arm()
   // hud.show_potion_button = true
   hud.draw(_strategy, eq.eq_type)
-  hud.debug([s.screen_x+" / "+s.pos_x, s.buffs_string, s.debuffs_string, s.foe_buff_string, s.foe_debuff_string, s.foe_debuff_I_time])
+  hud.debug([s.screen_x+" / "+s.pos_x, s.buffs_string, s.debuffs_string, s.foe_buff_string, s.foe_debuff_string, s.armor_])

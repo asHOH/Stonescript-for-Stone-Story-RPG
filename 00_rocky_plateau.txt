@@ -1,39 +1,45 @@
 /* --------- Level 0: Rocky plateau --------- */
 
+/* ----------------- imports ---------------- */
 var eq = import UserScript/eq
 var util = import UserScript/util
 var s = import UserScript/s
+var hud = import UserScript/hud
+
+/* ---------------- variables --------------- */
 var permapot = true
+var mask_run = permapot
+var post_mask_run = false
+var timer = new UserScript/timer
+var boss_atk_counter = new UserScript/timer
+var is_stunned = false
 
 ?s.loc_ = "rocky"
   util.harvest_on = false
-  var mask_run = permapot & s.loop_count = 1
-  var post_mask_run = permapot & s.loop_count >= 2
-  ?permapot
+  ?permapot 
+    ?s.loop_count > 1
+      mask_run = false
+      post_mask_run = true
     s.brew_potion("lucky")
+    s.activate_potion()
+    ?mask_run
+      util.cultist_walk_on = true
   :
     s.brew_potion("berserk")
+  ?s.debuffs_string = "stun" & !is_stunned
+    hud.show_perma_info(0, 9, "Stunned at timer" + timer.t + ", fs" + s.foe_state + ", " + s.foe_time)
 
-  /* Phase 1: weakness element is fire. Apply debuffs.
-  Phase 2: Prepare weapons of every element. When it uses vigor attack, it resist debuffs.
-  phase 3: Mind stone when it shields or uses orbital laser. Weak to all elements but gains resistance buff each time it shields.
-  */
-    // ?s.foe_state = 115 & foe.time >= 60 & util.cd("mind") <= 0
-    //   equipL mind
-    // :?count % 5 = 3 & ?s.foe_state = 32 & foe.time >= 67 & util.cd("mind") <= 0
-    //   equipL mind
-
-  var timer = new UserScript/timer
-  var boss_atk_counter = new UserScript/timer
-  ?s.total_time = 1
+  ?s.loc_begin_or_loop
     timer.close()
     boss_atk_counter.set(3)
-    // brew bronze + wood // berserk
   // ?s.pos_x = 121 & s.total_time < 400 & s.foe_state = 127 & s.foe_time >= 30 & s.foe_time <= 55
   //   eq.bardiche(true)
-  ?s.foe_distance > 16
+  ?s.all_foe_count = 0 & mask_run & s.buffs_string = "lucky"
+      eq.R_cultist()
+      util.autowalk_on = false
+  :?s.foe_distance > 16
     util.walk()
-  :?timer.at(0) | !util.try_dashing() // timer 0 is the moment after dodging. dashing straightly can be dangerous.
+  :?timer.between(0,1) | !util.try_dashing() // timer 2 is the dodge moment. wait 2 frames then dash back.
     ?s.foe_distance < 11
       ?s.foe_ = "phase1"        
         phase1()
@@ -44,64 +50,109 @@ var permapot = true
       :
         scout()
     
+/* Phase 1: weakness element is fire. Apply debuffs.
+  Phase 2: Prepare weapons of every element. When it uses vigor attack, it resist debuffs.
+  phase 3: Mind stone when it shields or uses orbital laser. Weak to all elements but gains resistance buff each time it shields. */
+
 func phase3()
   inspect_weakness_phase3()
   >`0,17,@timer.t@
   >`0,18,boss_atk_counter@boss_atk_counter.t@
   // determines when to dodge
+  ?(!s.can_activate_or_using_bardiche) & (!permapot)
+    s.activate_potion()
   ?s.foe_state = 115 // satellite
     ?s.foe_time = 0
-      timer.set(78)
+      timer.set(79)
     boss_atk_counter.set(3)
   :?s.foe_state = 32
     ?s.foe_time = 0
-      boss_atk_counter.update()
-    ?boss_atk_counter.at(1) // shield
-      ?s.foe_time = 0
-        timer.set(70)
+      boss_atk_counter.update() // todo: sometimes it doesn't update
+      ?boss_atk_counter.at(1) // shield
+        timer.set(72)
+      ?boss_atk_counter.between(2,3) & s.foe_state_at(32,89)
+        eq.R_shield_ah()
+        return
   :?s.foe_state_at(33, 25)
       timer.close()
   timer.update()
   
   // action: dodge or attack
-  ?timer.at(1)
+  ?timer.at(2)
     util.try_dodge()
+  :?mask_run
+      eq.R_cultist()
+      ?!L_debuff_weapon()
+        eq.L_sword()
   :?!util.try_bardiche()
     ?s.foe_has_armor
-      eq.L(eq.fire_hammer) // best hammer
+      eq.L(eq.best_hammer)
       R_debuff_weapon()
     :
       eq.L_sword()
       inspect_another_weakness_phase3()
       ?!R_debuff_weapon()
         eq.R_sword()
+    
 
 func phase1()
   eq.element = "fire"
-  ?!util.try_bardiche()
+  ?mask_run & s.buffs_string = "lucky"
+    eq.R_cultist()
+    ?!L_debuff_weapon()
+      eq.L_sword()
+  :?!util.try_bardiche()
     eq.L_sword()
     ?!R_debuff_weapon()
       eq.R_sword2()
 
 func phase2()
   util.inspect_weakness()
-  ?!util.try_bardiche()
+  ?mask_run & s.buffs_string = "lucky"
+    eq.R_cultist()
     eq.L_sword()
+  :?!util.try_bardiche()
+    eq.L_sword()    
     ?(s.foe_buff_string = "buff") | !R_debuff_weapon()
       eq.R_sword2()
 
 func scout()
   eq.element = "none"
-  ?!util.try_bardiche()
-    eq.L(eq.ice_sword) // highest dps sword
+  ?mask_run & s.buffs_string = "lucky"
+    eq.R_cultist()
+    ?!L_debuff_weapon()
+      eq.L_sword()
+  :?!util.try_bardiche()
+    eq.L(eq.best_sword)
     ?!R_debuff_weapon()
       eq.R_sword()
+
+func L_debuff_weapon()
+  ?s.foe_debuff_F_time < 5
+    eq.L_sword_dF()
+    return true
+  ?s.foe_debuff_I_count < 6 | s.foe_debuff_I_time < 6
+    eq.L_sword_dI()
+    return true
+  ?(!s.foe_debuff_P) & (s.foe_ ! "phase3" | (s.foe_ = "phase3" & s.foe_state = 32 & s.foe_time >= 55))
+    eq.L_sword_dP()
+    return true
+  ?s.lost_hp >= 60
+    eq.L_sword_dL()
+    return true
+  ?s.foe_has_armor
+    eq.L(eq.best_hammer2)
+    return true
+  ?s.lost_hp >= 15
+    eq.L_sword_dL()
+    return true
+  return false
 
 func R_debuff_weapon()
   ?s.foe_debuff_F_time < 5
     eq.R_sword_dF()
     return true
-  ?s.foe_debuff_I_count < 6 | s.foe_debuff_I_time < 5
+  ?s.foe_debuff_I_count < 6 | s.foe_debuff_I_time < 6
     eq.R_sword_dI()
     return true
   ?(!s.foe_debuff_P) & (s.foe_ ! "phase3" | (s.foe_ = "phase3" & s.foe_state = 32 & s.foe_time >= 55))
@@ -111,9 +162,9 @@ func R_debuff_weapon()
     eq.R_sword_dL()
     return true
   ?s.foe_has_armor
-    eq.R(eq.poison_hammer) // second best hammer
+    eq.R(eq.best_hammer2)
     return true
-  ?s.lost_hp >= 15
+  ?s.lost_hp >= 20
     eq.R_sword_dL()
     return true
   return false
