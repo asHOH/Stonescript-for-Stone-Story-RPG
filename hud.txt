@@ -10,12 +10,11 @@ var state_lister = import UserScript/state_lister
 var printer = import UserScript/printer
 
 /* ------------ public variables ------------ */
+var show_hud_text = true // turn off to see bug reports clearly
 var show_potion_button = false // to modify, use util.hud.show_potion_button = true in the level scripts.
-var show_foe_state = true
 var show_foe_full_name = true
 var show_foe_distance = true
 var show_hp_lost = true
-var show_hud_text = true // turn off to see bug reports clearly
 var show_state_lister = true
 
 var healthbar_ticks = 10
@@ -26,6 +25,7 @@ var show_enemy_healthbar = true
 var _hud_on = true
 var _frame_per_loop = "?"
 var _hp_lost_per_loop = "?"
+var _perma_show_info = []
 
 /* ----------------- colors ----------------- */
 func _strategy_color(strategy)
@@ -80,10 +80,7 @@ func _info_color(info)
 /* ------------- initialization ------------- */
 // run at loc.begin
 func init()
-  ?s.loc_ = "uulaa_shop" | s.loc_ = "undead_crypt_intro" | loc.isQuest
-    _hud_on = false
-  :
-    _hud_on = true
+  _hud_on = !(s.loc_ = "uulaa_shop" | s.loc_ = "undead_crypt_intro" | loc.isQuest)
   ?show_state_lister
     state_lister.on_begin_or_loop()
 
@@ -95,7 +92,7 @@ func on_loop()
     state_lister.on_begin_or_loop()
 
 /* --------------- debug panel -------------- */
-// input: array of any size. Output is on the middle left of the screen.
+// input: array. Output is on the middle left of the screen. Should be called every frame.
 func debug(infos)
   var indent = 0
   ?show_state_lister
@@ -103,6 +100,10 @@ func debug(infos)
   for i = 0..infos.Count()-1
     var info = infos[i]
     printer.print(indent, 6 + i, _info_color(info), info)
+
+// should be called only once
+func perma_show(x, y, info)
+  _perma_show_info.Add([x, y, _info_color(info), info])
 
 /* -------------- draw function ------------- */
 func draw(strategy, eq_type)
@@ -112,6 +113,9 @@ func draw(strategy, eq_type)
   draw_healthbar()
   ?show_state_lister
     state_lister.draw()
+  for info : _perma_show_info
+    printer.print(info[0], info[1], info[2], info[3])
+
 
 /* ------------------- hud ------------------ */
 func draw_hud(strategy, eq_type)
@@ -138,15 +142,6 @@ func draw_hud(strategy, eq_type)
       line2.Add([palette.orange, "foes "])
       line2.Add([palette.orange, foe_distance_text, 3])
       line2.Add([palette.orange, "away"])
-
-    ?show_foe_state
-      ?show_foe_distance
-        line2.Add([palette.white, ","])
-      line2.Add([palette.orange, "state("])
-      line2.Add([palette.orange, s.foe_state, 3])
-      line2.Add([palette.orange, ","])
-      line2.Add([palette.orange, s.foe_time, 3])
-      line2.Add([palette.orange, ") "])
 
     ?show_foe_full_name
       var foe_infos = s.str_break(s.foe_, s.screen_w - 17 - indent)
