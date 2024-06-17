@@ -19,6 +19,7 @@ var check_foe_buffs= true
 var box_x = 1
 var box_y = 6
 
+
 /* ----------------- imports ---------------- */
 var s = import UserScript/s
 
@@ -58,13 +59,13 @@ func on_begin_or_loop()
 
 func draw()
   ?check_damage
-    check_damage()
+    check_and_show_damage()
   ?check_healing
-    check_healing()
+    check_and_show_healing()
   ?check_debuffs
-    check_debuffs()
+    check_and_show_debuffs()
   ?check_foe_buffs
-    check_foe_buffs()
+    check_and_show_foe_buffs()
 
   ?state_list.Count()
     ?s.foe_state ! state_list[0][0]
@@ -81,25 +82,25 @@ func draw()
   ?event_recorder.Count()
     check_event_time()
 
-func check_damage()
+func check_and_show_damage()
   var hp_and_armor = s.hp_ + s.armor_
   ?hp_and_armor + 0.5 < hp_and_armor_last_frame
     event_recorder.Add(["Got " + s.round_to_int(10*(hp_and_armor_last_frame - hp_and_armor))/10.0 + " damage at: ", s.foe_state, s.foe_time, s.total_time])
     update_event_display()
   hp_and_armor_last_frame = hp_and_armor
 
-func check_healing()
+func check_and_show_healing()
   ?s.hp_ > s.hp_last_frame
     event_recorder.Add(["Healed " + (s.hp_ - s.hp_last_frame) + " hp at: ", s.foe_state, s.foe_time, s.total_time])
     update_event_display()
 
-func check_debuffs()
+func check_and_show_debuffs()
   ?s.debuffs_count > debuff_count_last_frame
     event_recorder.Add(["Got debuff at: ", s.foe_state, s.foe_time, s.total_time])
     update_event_display()
   debuff_count_last_frame = s.debuffs_count
 
-func check_foe_buffs()
+func check_and_show_foe_buffs()
   ?s.foe_buff_count > foe_buff_count_last_frame
     event_recorder.Add(["Foe got buff at: ", s.foe_state, s.foe_time, s.total_time])
     update_event_display()
