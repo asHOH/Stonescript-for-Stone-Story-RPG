@@ -16,7 +16,7 @@ var s = import UserScript/s
       :
         util.mmelee_strategy()
       ?s.foe_state = 32 & s.foe_time = 32 // Guardian hit on time 33(?)
-        util.try_dodging()
+        util.try_dodge()
   // Non-boss
   :
     ?s.loc_stars <= 7
