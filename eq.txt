@@ -188,7 +188,7 @@ func L_sword2()
   :?element = "vigor"
     L(vigor_sword2)
   :
-    L(universal_sword)
+    L(best_sword2)
 
 func R_sword2()
   ?element = "poison"
@@ -202,7 +202,7 @@ func R_sword2()
   :?element = "vigor"
     R(vigor_sword2)
   :
-    R(universal_sword)
+    R(best_sword2)
 
 /* -------------- debuff sword -------------- */
 func L_sword_dL()

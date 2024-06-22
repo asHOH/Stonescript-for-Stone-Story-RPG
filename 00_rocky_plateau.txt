@@ -15,23 +15,23 @@ var boss_atk_counter = new UserScript/timer
 var is_stunned = false
 
 ?s.loc_ = "rocky"
+  /* ------------- set parameters ------------- */
   util.harvest_on = false
   util.autowalk_on = false
-  brew_potion()
-  check_stunned()
-  ?permapot 
-    ?s.loop_count > 1
-      mask_run = false
-      post_mask_run = true
-    ?mask_run
-      util.cultist_walk_on = true
+  ?mask_run
+    util.cultist_walk_on = true
+  ?permapot & (s.loop_count > 1)
+    mask_run = false
+    post_mask_run = true
+
+  /* --------------- strategies --------------- */
+  brew_potion() // brew lucky potion if permapot is on, otherwise berserk
+  check_stunned() // Normally you should not be stunned. This just helps debugging.
+  timer.update()
 
   ?s.loc_begin_or_loop
-    timer.close()
     boss_atk_counter.set(3)
-  // ?s.pos_x = 121 & s.total_time < 400 & s.foe_state = 127 & s.foe_time >= 30 & s.foe_time <= 55
-  //   eq.bardiche(true)
-  ?s.foe_distance > 16 & !timer.between(0,1)
+  ?!timer.between(0,1) & s.foe_distance > 16
     util.walk()
   :?timer.between(0,1) | (!util.try_dashing()) // timer 2 is the dodge moment. wait 2 frames then dash back.
     ?s.foe_distance < 11
@@ -44,9 +44,6 @@ var is_stunned = false
       :
         scout()
 
-  timer.update()
-
-
 /* Phase 1: weakness element is fire. Apply debuffs.
   Phase 2: Prepare weapons of every element. When it uses vigor attack, it resist debuffs.
   phase 3: Mind stone when it shields or uses orbital laser. Weak to all elements but gains resistance buff each time it shields. */
@@ -54,7 +51,6 @@ var is_stunned = false
 func phase3()
   inspect_weakness_phase3()
   >`0,17,boss_atk_counter@boss_atk_counter.t@
-  >`0,18,@timer.t@
   // determine: when to dodge
   ?(!s.can_activate_or_using_bardiche) & (!permapot)
     s.activate_potion()
@@ -65,8 +61,6 @@ func phase3()
   :?s.foe_state = 32
     ?s.foe_state_changed
       boss_atk_counter.update()
-      // ?boss_atk_counter.at(1) // shield
-      //   timer.set(70)
     :?!boss_atk_counter.at(1)
       ?defend_at(89)
         return
@@ -79,10 +73,10 @@ func phase3()
   ?timer.at(2)
     util.try_dodge()
   :?mask_run
-      eq.R_cultist()
-      ?!L_debuff_weapon()
-        eq.L_sword()
-  :?!util.try_bardiche()
+    eq.R_cultist()
+    ?!L_debuff_weapon()
+      eq.L_sword()
+  :?permapot | !util.try_bardiche()
     ?s.foe_has_armor
       eq.L(eq.best_hammer)
       R_debuff_weapon()
@@ -100,7 +94,7 @@ func phase1()
     ?!L_debuff_weapon()
       eq.L_sword()
   :
-    ?util.try_bardiche()
+    ?!permapot & util.try_bardiche()
       return
     :
       eq.L_sword()
@@ -130,7 +124,7 @@ func scout()
     ?!L_debuff_weapon()
       eq.L_sword()
   :
-    ?util.try_bardiche()
+    ?!permapot & util.try_bardiche()
       return
     :
       eq.L(eq.best_sword)

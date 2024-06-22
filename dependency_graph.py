@@ -22,9 +22,7 @@ def extract_dependencies(files_content):
         dependencies[filename] = set()
         for match in dependency_pattern.finditer(content):
             dependency = f"{match.group(2)}.txt"
-            if (
-                dependency != filename and dependency != "s.txt"
-            ):  # Exclude self and s.txt dependencies
+            if dependency not in [filename, "s.txt"]:  # Exclude self and s.txt dependencies
                 dependencies[filename].add(dependency)
     return dependencies
 
