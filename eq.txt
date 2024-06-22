@@ -19,7 +19,7 @@ var compound_shield_maxarmor = "compound shield *10 -shiny"
 var compound_shield_maxarmor_armor = 24
 
 var poison_shield_A = "poison shield 10* A"
-var ice_shield_A = "" // "ice shield 10* A"
+var ice_shield_A = "ice shield 10* A"
 var fire_shield_A = "fire shield 10* A"
 var aether_shield_A = "" // "aether shield 10* A"
 var vigor_shield_A = "vigor shield 10* A"
@@ -30,27 +30,27 @@ var shield_af = "fire shield 10* af" // burning damage when hit
 var shield_ai = "ice shield 10* ai" // slow when hit
 
 /* ----------------- swords ----------------- */
-var universal_sword = "vigor sword 10* dL" // universal sword for when you don't have a good sword
-var universal_sword2 = "ice sword 10* dI" // backup universal sword
-var best_sword = "ice sword 10* +17 D" // best DPS sword
-var best_sword2 = "fire sword 10* +17 D" // second best DPS sword
+var universal_sword = "vigor sword 10* dL -big" // universal sword for when you don't have a good sword
+var universal_sword2 = "ice sword 10* dI -big" // backup universal sword
+var best_sword = "ice sword 10* +17 D -big" // best DPS sword
+var best_sword2 = "fire sword 10* +17 D -big" // second best DPS sword
 
-var poison_sword = "poison sword 10* D"
-var ice_sword = "ice sword 10* D"
-var fire_sword = "fire sword 10* D"
-var aether_sword = "aether sword 10* D"
-var vigor_sword = "vigor sword 10* D"
+var poison_sword = "poison sword 10* D -big"
+var ice_sword = "ice sword 10* D -big"
+var fire_sword = "fire sword 10* D -big"
+var aether_sword = "aether sword 10* D -big"
+var vigor_sword = "vigor sword 10* D -big"
 
-var poison_sword2 = "poison sword 10* +9 D"
-var ice_sword2 = "ice sword 10* +9 D"
-var fire_sword2 = "fire sword 10* +13 D"
-var aether_sword2 = "aether sword 10* +9 D"
-var vigor_sword2 = "vigor sword 10* +9 D"
+var poison_sword2 = "poison sword 10* +9 D -big"
+var ice_sword2 = "ice sword 10* +9 D -big"
+var fire_sword2 = "fire sword 10* +13 D -big"
+var aether_sword2 = "aether sword 10* +9 D -big"
+var vigor_sword2 = "vigor sword 10* +9 D -big"
 
-var sword_dL = "vigor sword 10* dL"
-var sword_dP = "poison sword 10* dP"
-var sword_dI = "ice sword 10* dI"
-var sword_dF = "fire sword 10* dF"
+var sword_dL = "vigor sword 10* dL -big"
+var sword_dP = "poison sword 10* dP -big"
+var sword_dI = "ice sword 10* dI -big"
+var sword_dF = "fire sword 10* dF -big"
 
 /* ----------------- hammers ---------------- */
 var best_hammer = "poison hammer 10* D" // best DPS hammer
