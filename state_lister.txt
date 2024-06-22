@@ -9,7 +9,7 @@ List last several enemy states & times and track events including:
 
 /* ----------- tunable parameters ----------- */
 var max_list_length = 5
-var event_display_time = 90
+var event_display_time = 120
 
 var check_damage  = true
 var check_healing = false
@@ -122,8 +122,8 @@ func update_cur_state_text()
 
 func update_event_display()
   var temp_text = ""
-  for a : event_recorder
-    temp_text += a[0] + a[1] + ":" + a[2] + "\n"
+  for event : event_recorder
+    temp_text += event[0] + event[1] + "," + event[2] + "|" + event[3] + "\n"
   event_text.text = temp_text
 
 func check_event_time()

@@ -266,11 +266,7 @@ func walk()
     eq.R_sword()
   :?s.foe_distance <= 23 & s.ai_enabled
     eq.R_shield_A()
-  :?s.armor_ <= 13 | (s.armor_ <= 15 & !s.ai_enabled)
-    eq.R_shield_regen()
-  :?s.armor_ <= 24 | (s.armor_ <= 26 & !s.ai_enabled)
-    eq.R_shield_maxarmor()
-  :
+  :?!eq.R_shield_auto(!s.ai_enabled)
     equipL triskelion // range 10
     equipR ouroboros // range 17
     return
@@ -278,7 +274,7 @@ func walk()
   // left hand
   ?cultist_walk_on & (s.has_pickup | (s.all_foe_count = 0 & s.pos_x > 200))
     equipL star
-  :?s.is_walking & s.lost_hp < s.maxhp_ / 2
+  :?s. is_walking & s.lost_hp < s.maxhp_ / 2
     equipL triskelion
   :?s.lost_hp > 0 & s.foe_distance > 18
     equipL ouroboros
@@ -346,4 +342,4 @@ func end_frame()
   // mission.skeleton_arm()
   // hud.show_potion_button = true
   hud.draw(_strategy, eq.eq_type)
-  hud.debug([s.screen_x+" / "+s.pos_x, s.buffs_string, s.debuffs_string, s.foe_buff_string, s.foe_debuff_string, s.armor_])
+  hud.debug([s.screen_x+" / "+s.pos_x, s.buffs_string, s.debuffs_string, s.foe_buff_string, s.foe_debuff_string])

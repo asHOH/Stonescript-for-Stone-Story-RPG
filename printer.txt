@@ -32,7 +32,8 @@ func print_lines(x, y, textss)
 
 
 func print_on_foe(x, y, text_color, text_content)
-  >f@x@,@y@,@text_color@,@text_content@
+  ?s.foe_
+    >f@x@,@y@,@text_color@,@text_content@
 
 func print_line_on_foe(x, y, texts)
   ?texts.Count() = 0

@@ -14,6 +14,7 @@ var round_to_int = math.RoundToInt
 var floor = math.FloorToInt
 var log = math.Log
 var max = math.Max
+var min = math.Min
 var color_lerp = color.Lerp
 var draw_Bg = draw.Bg
 var screen_next = screen.Next
@@ -84,7 +85,9 @@ var foe_hp_and_armor = 0
 var foe_has_armor = false
 var foe_maxhp = 0
 var foe_maxarmor = 0
+var foe_state_last_frame = 0
 var foe_state = 0
+var foe_state_changed = false
 var foe_time = 0
 var foe_buff_count = 0
 var foe_buff_string = ""
@@ -141,8 +144,10 @@ func on_start_frame()
   foe_hp_and_armor = foe_hp + foe_armor
   foe_has_armor = foe_armor > 0
   foe_maxhp = foe.maxhp
-  foe_maxarmor = foe.maxarmor
+  foe_maxarmor = max(foe_armor, foe.maxarmor)
+  foe_state_last_frame = foe_state
   foe_state = foe.state
+  foe_state_changed = (foe_state ! foe_state_last_frame)
   foe_time = foe.time
   foe_buff_count = foe.buffs.count
   foe_buff_string = foe.buffs.string
@@ -245,6 +250,7 @@ func str_repeat(str, n)
   ?n < 1
     return ""
   var result = ""
+  n = floor(n)
   for i = 1..n
     result += str
   return result
@@ -262,12 +268,13 @@ func create_ui(UI, x, y, w)
 func relu(num)
   return max(num, 0)
 
-func create_healthbar(start_text, ticks, current, max, color_min, color_max, color_BG, end_text)
+func create_healthbar(start_text, ticks, current, cap, color_min, color_max, color_BG, end_text)
+  current = max(current, 1)
   var healthbar = []
-  var full_ticks = (0.0+current)/max*ticks
+  var full_ticks = (0.0+current-1)/cap*ticks + 0.5
   var has_half_tick = round_to_int(full_ticks - floor(full_ticks))
   var half_tick = str_repeat("▒", has_half_tick)
-  var color_current = color_lerp(color_min, color_max, (0.0+current)/max)
+  var color_current = color_lerp(color_min, color_max, (0.0+current)/cap)
   healthbar.Add([color_BG, start_text])
   healthbar.Add([color_current, str_repeat("█", floor(full_ticks)) + half_tick, ticks])
   healthbar.Add([color_BG, end_text])

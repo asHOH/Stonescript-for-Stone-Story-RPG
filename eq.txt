@@ -14,7 +14,9 @@ var universal_sword_in_use = 0
 
 /* ----------------- shields ---------------- */
 var compound_shield_regen = "compound shield *10 shiny"
+var compound_shield_regen_armor = 13
 var compound_shield_maxarmor = "compound shield *10 -shiny"
+var compound_shield_maxarmor_armor = 24
 
 var poison_shield_A = "poison shield 10* A"
 var ice_shield_A = "" // "ice shield 10* A"
@@ -25,7 +27,7 @@ var vigor_shield_A = "vigor shield 10* A"
 var shield_ah = "vigor shield 10* ah" // heal when hit
 var shield_ap = "poison shield 10* ap" // bonus damage when hit
 var shield_af = "fire shield 10* af" // burning damage when hit
-var shield_ai = "" //"ice shield 10* ai" // slow when hit
+var shield_ai = "ice shield 10* ai" // slow when hit
 
 /* ----------------- swords ----------------- */
 var universal_sword = "vigor sword 10* dL" // universal sword for when you don't have a good sword
@@ -41,7 +43,7 @@ var vigor_sword = "vigor sword 10* D"
 
 var poison_sword2 = "poison sword 10* +9 D"
 var ice_sword2 = "ice sword 10* +9 D"
-var fire_sword2 = "fire sword 10* +9 D"
+var fire_sword2 = "fire sword 10* +13 D"
 var aether_sword2 = "aether sword 10* +9 D"
 var vigor_sword2 = "vigor sword 10* +9 D"
 
@@ -119,6 +121,16 @@ func shield_regen()
   set_eq_type("max_regen")
   R_shield_regen()
   L("quest")
+
+func R_shield_auto(quest_equipped)
+  ?s.armor_ <= compound_shield_regen_armor | ((s.armor_ <= compound_shield_regen_armor + 2) & quest_equipped)
+    R_shield_regen()
+    return true
+  :?s.armor_ <= compound_shield_maxarmor_armor | ((s.armor_ <= compound_shield_maxarmor_armor + 2) & quest_equipped)
+    R_shield_maxarmor()
+    return true
+  return false
+
 
 
 /* -------------- debuff shield ------------- */
