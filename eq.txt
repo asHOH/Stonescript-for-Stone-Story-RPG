@@ -14,9 +14,9 @@ var universal_sword_in_use = 0
 
 /* ----------------- shields ---------------- */
 var compound_shield_regen = "compound shield *10 shiny"
-var compound_shield_regen_armor = 13
+var compound_shield_regen_armor = 14
 var compound_shield_maxarmor = "compound shield *10 -shiny"
-var compound_shield_maxarmor_armor = 24
+var compound_shield_maxarmor_armor = 29
 
 var poison_shield_A = "poison shield 10* A"
 var ice_shield_A = "ice shield 10* A"
@@ -41,11 +41,11 @@ var fire_sword = "fire sword 10* D -big"
 var aether_sword = "aether sword 10* D -big"
 var vigor_sword = "vigor sword 10* D -big"
 
-var poison_sword2 = "poison sword 10* +9 D -big"
-var ice_sword2 = "ice sword 10* +9 D -big"
-var fire_sword2 = "fire sword 10* +13 D -big"
-var aether_sword2 = "aether sword 10* +9 D -big"
-var vigor_sword2 = "vigor sword 10* +9 D -big"
+var poison_sword2 = "poison sword 10* D +9 -big"
+var ice_sword2 = "ice sword 10* D +9 -big"
+var fire_sword2 = "fire sword 10* D +16 -big"
+var aether_sword2 = "aether sword 10* D +9 -big"
+var vigor_sword2 = "vigor sword 10* D +9 -big"
 
 var sword_dL = "vigor sword 10* dL -big"
 var sword_dP = "poison sword 10* dP -big"

@@ -257,13 +257,13 @@ func str_repeat(str, n)
 
 
 /* ------------- Other functions ------------ */
-func create_ui(UI, x, y, w)
-  UI.x = x
-  UI.y = y
-  UI.w = w
-  UI.dock = top_left
-  UI.anchor = top_left
-  return UI
+func create_ui(ui_, x, y, w)
+  ui_.x = x
+  ui_.y = y
+  ui_.w = w
+  ui_.dock = top_left
+  ui_.anchor = top_left
+  return ui_
 
 func relu(num)
   return max(num, 0)

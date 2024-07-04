@@ -9,8 +9,6 @@ var quarter_on = true // turn off when you need to save cd for quarterstaff
 var dashing_on = true // turn off when dashing may cause danger
 var blade_on = true // turn off when farming easy stages (due to lengthy animation)
 var harvest_on = true // turn off when you don't want to harvest
-var autowalk_on = true // turn off when using special strategies when there is no enemy. Updates to true frame-wise.
-var cultist_walk_on = false // turn on when doing maskrun. Updates to true frame-wise.
 var potion_threshold = 0 // when hp is below this, drink potion
 var slay_threshold = 112 // when foe.hp is below this, slay
 var bladeDS_threshold = 17 // when foe count >= this, activate the blade Double Screen
@@ -18,6 +16,9 @@ var blade_threshold = 10 // when foe count >= this, activate the blade
 var melee_spl_threshold = 2 // when foe count nearby >= this, equip the splashing version of melee
 var ranged_spl_threshold = 3 // when foe count nearby >= this, equip the splashing version of ranged
 var talisman_element = "fire" // element to summon, "fire"/"aether"/"none"
+
+var autowalk_on = true // turn off when using special strategies when there is no enemy. Updates to true frame-wise.
+var cultist_walk_on = false // turn on when doing maskrun. Updates to false frame-wise.
 var timer = import UserScript/timer
 // timer for actions such as dodge
 
@@ -25,7 +26,6 @@ var timer = import UserScript/timer
 var _bladeDS_timer = new UserScript/timer
 var _summon_timer = new UserScript/timer
 var _foe_count_last_frame = 0
-var _new_foe_counter = 0
 var _strategy = "none"
 var _has_summoned = false
 
