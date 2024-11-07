@@ -10,7 +10,6 @@ var element = "none" // target element of equipment
 var eq_type = "none" // current type of equipment set
 var left_hand = "" // current left hand equipment
 var right_hand = "" // current right hand equipment
-var universal_sword_in_use = 0
 
 /* ----------------- shields ---------------- */
 var compound_shield_regen = "compound shield *10 shiny"
@@ -30,46 +29,46 @@ var shield_af = "fire shield 10* af" // burning damage when hit
 var shield_ai = "ice shield 10* ai" // slow when hit
 
 /* ----------------- swords ----------------- */
-var universal_sword = "vigor sword 10* dL -big" // universal sword for when you don't have a good sword
-var universal_sword2 = "ice sword 10* dI -big" // backup universal sword
-var best_sword = "ice sword 10* +17 D -big" // best DPS sword
-var best_sword2 = "fire sword 10* +17 D -big" // second best DPS sword
+var poison_sword = "poison sword 10* D -big shiny"
+var ice_sword = "ice sword 10* D -big shiny"
+var fire_sword = "fire sword 10* D -big shiny"
+var aether_sword = "aether sword 10* D -big shiny"
+var vigor_sword = "vigor sword 10* D -big shiny"
 
-var poison_sword = "poison sword 10* D -big"
-var ice_sword = "ice sword 10* D -big"
-var fire_sword = "fire sword 10* D -big"
-var aether_sword = "aether sword 10* D -big"
-var vigor_sword = "vigor sword 10* D -big"
-
-var poison_sword2 = "poison sword 10* D +9 -big"
-var ice_sword2 = "ice sword 10* D +9 -big"
-var fire_sword2 = "fire sword 10* D +16 -big"
-var aether_sword2 = "aether sword 10* D +9 -big"
-var vigor_sword2 = "vigor sword 10* D +9 -big"
+var poison_sword2 = "poison sword 10* D -big -shiny"
+var ice_sword2 = "ice sword 10* D -big -shiny"
+var fire_sword2 = "fire sword 10* D -big -shiny"
+var aether_sword2 = "aether sword 10* D -big -shiny"
+var vigor_sword2 = "vigor sword 10* D -big -shiny"
 
 var sword_dL = "vigor sword 10* dL -big"
 var sword_dP = "poison sword 10* dP -big"
 var sword_dI = "ice sword 10* dI -big"
 var sword_dF = "fire sword 10* dF -big"
 
-/* ----------------- hammers ---------------- */
-var best_hammer = "poison hammer 10* D" // best DPS hammer
-var best_hammer2 = "fire hammer 10* D" // second best DPS hammer
+var universal_sword = sword_dL // universal sword for when you don't have a good sword
+var universal_sword2 = fire_sword // backup universal sword
+var best_sword = fire_sword // best DPS sword
+var best_sword2 = fire_sword2 // second best DPS sword
 
+/* ----------------- hammers ---------------- */
 var poison_hammer = "poison hammer 10* D"
 var ice_hammer = "" // "ice hammer 10* D"
 var fire_hammer = "fire hammer 10* D"
 var aether_hammer = "" // "aether hammer 10* D"
 var vigor_hammer = "" // "vigor hammer 10* D"
 
+var best_hammer = poison_hammer // best DPS hammer
+var best_hammer2 = fire_hammer // second best DPS hammer
+
 /* ----------------- others ----------------- */
 var repeating_crossbow = "repeating crossbow 10*"
 var aether_crossbow = "aether crossbow 10*"
+var ice_crossbow = "ice crossbow 10*"
 var wand_dI = "ice wand 10* dI"
 var wand_dP = "poison wand 10* dP"
 
 func on_start_frame()
-  universal_sword_in_use = 0
   left_hand = ""
   right_hand = ""
 
@@ -263,6 +262,8 @@ func R_hammer()
 func crossbow()
   ?element = "aether"
     equip @aether_crossbow@
+  :?element = "ice"
+    equip @ice_crossbow@
   :
     equip @repeating_crossbow@
 
@@ -295,13 +296,7 @@ func rranged()
 func rranged_spl()
   set_eq_type("rranged_spl") // under development
   equipL vigor wand *10
-  equipR poison wand *10 dP
-
-// double debuff ranged
-func ddanged()
-  set_eq_type("ddanged_spl")
-  L(wand_dI)
-  R(wand_dP)
+  equipR aether wand *10
 
 /* ------------- armor generator ------------ */
 // func armor_gen()

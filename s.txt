@@ -250,7 +250,7 @@ func str_repeat(str, n)
   ?n < 1
     return ""
   var result = ""
-  n = floor(n)
+  n = min(floor(n), 100)
   for i = 1..n
     result += str
   return result

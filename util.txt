@@ -86,14 +86,8 @@ func try_splash_mmelee()
   return false
 
 func try_splash_rranged()
-  ?s.foe_count_within(25) >= ranged_spl_threshold | (eq.eq_type = "rranged_spl" & s.right_state = 2) | s.foe_ = "immune_to_physical" 
+  ?s.foe_count_within(25) >= ranged_spl_threshold | (eq.eq_type = "rranged_spl" & s.right_state = 2) | s.foe_ = "immune_to_physical"
     eq.rranged_spl()
-    return true
-  return false
-
-func try_smite_rranged() // apply debuffs when you have smite buffs
-  ?s.buffs_smite
-    eq.ddanged()
     return true
   return false
 
@@ -211,7 +205,7 @@ func mmelee_strategy()
 
 func rranged_strategy()
   _set_strategy("rranged")
-  ?!(try_slay() | try_blade() | try_smite_rranged() | try_splash_rranged() | try_pickup())
+  ?!(try_slay() | try_blade() | try_splash_rranged() | try_pickup())
     eq.rranged()
 
 func mmixed_strategy()
@@ -270,11 +264,11 @@ func walk()
     equipL triskelion // range 10
     equipR ouroboros // range 17
     return
-  
+
   // left hand
   ?cultist_walk_on & (s.has_pickup | (s.all_foe_count = 0 & s.pos_x > 200))
     equipL star
-  :?s. is_walking & s.lost_hp < s.maxhp_ / 2
+  :?s.is_walking & s.lost_hp < s.maxhp_ / 2
     equipL triskelion
   :?s.lost_hp > 0 & s.foe_distance > 18
     equipL ouroboros
@@ -282,7 +276,7 @@ func walk()
     equipL quest
   :
     eq.L_sword()
-  
+
 func report_unknown_foe()
   >Unknown foe: @s.foe_@
   eq.mmelee()

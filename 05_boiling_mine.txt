@@ -12,7 +12,7 @@ var s = import UserScript/s
     util.slay_threshold = 0
     ?s.foe_state >= 2 // Guardian is attackable
       ?s.foe_distance > 8
-        util.ranged_boss_strategy()
+        util.eq.crossbow()
       :
         util.mmelee_strategy()
       ?s.foe_state = 32 & s.foe_time = 32 // Guardian hit on time 33(?)
