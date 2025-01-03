@@ -15,7 +15,7 @@ var right_hand = "" // current right hand equipment
 var compound_shield_regen = "compound shield *10 shiny"
 var compound_shield_regen_armor = 14
 var compound_shield_maxarmor = "compound shield *10 -shiny"
-var compound_shield_maxarmor_armor = 29
+var compound_shield_maxarmor_armor = 35
 
 var poison_shield_A = "poison shield 10* A"
 var ice_shield_A = "ice shield 10* A"
