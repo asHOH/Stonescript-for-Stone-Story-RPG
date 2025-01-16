@@ -58,8 +58,7 @@ func try_blade()
   :?blade_on & s.cur_screen_foe_count >= blade_threshold & s.can_activate_now("blade")
     ?foe.distance < 10
       return eq.blade()
-    :
-      try_dashing() | try_quarter_dash()
+    :?(try_dashing() | try_quarter_dash())
   return false
 
 func bladeDS()
@@ -71,8 +70,7 @@ func bladeDS()
     ?_bladeDS_timer.at(0)
       eq.blade()
       screen.ResetOffset()
-    :
-      try_dashing() | try_quarter_dash()
+    :?(try_dashing() | try_quarter_dash())
 
 func try_splash_mmelee()
   ?foe.GetCount(9) >= melee_spl_threshold | (eq.eq_type = "mmelee_spl" & item.right.state = 2)
