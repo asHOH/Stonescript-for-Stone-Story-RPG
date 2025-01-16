@@ -3,14 +3,14 @@
 var util = import UserScript/util
 var s = import UserScript/s
 
-?s.loc_ = "deadwood"
+?loc = "deadwood"
   util.eq.element = "none"
   util.harvest_on = false
   util.melee_spl_threshold = 99 // never try splashing
 
   // Boss
   ?s.foe_ = "phase1"
-    ?s.loc_stars > 5
+    ?loc.stars > 5
       util.slay_threshold = 0
     util.ranged_boss_strategy()
   :?s.foe_ = "phase2"

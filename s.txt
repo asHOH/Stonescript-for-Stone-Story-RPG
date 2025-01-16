@@ -2,39 +2,15 @@
 
 /* ---------------- functions --------------- */
 var cd = item.GetCooldown
-var can_activate = item.CanActivate
-var foe_count_within = foe.GetCount
-var str_size = string.Size
-var str_break = string.Break
-var str_split = string.Split
-var str_equals = string.Equals
-var int_parse = int.Parse
-var clamp = math.Clamp
-var round_to_int = math.RoundToInt
 var floor = math.FloorToInt
-var log = math.Log
-var max = math.Max
-var min = math.Min
-var color_lerp = color.Lerp
-var draw_Bg = draw.Bg
-var screen_next = screen.Next
-var screen_reset_offset = screen.ResetOffset
-var add_panel = ui.AddPanel
-var add_text = ui.AddText
 
 
 /* ---------------- const var --------------- */
-var loc_ = loc // actually changes, but does not matter
-var loc_name = loc.name // actually changes, but does not matter
-var loc_stars = loc.stars
-var screen_w = screen.w
-var screen_h = screen.h
 var is_first_trial = (loc.bestTime = -1)
 var initial_best_time = loc.bestTime
 
 /* -------------- loop-wise var ------------- */
-var maxhp_ = maxhp // leveling up raises maxhp
-var hp_last_loop = maxhp_
+var hp_last_loop = maxhp
 var hp_lost_total = 0
 var best_time = initial_best_time
 var avg_time = loc.averageTime
@@ -42,8 +18,7 @@ var new_best = false
 var current_potion = item.potion
 
 func on_loop()
-  maxhp_ = maxhp
-  hp_lost_total += max(hp_last_loop - hp_last_frame, 0)
+  hp_lost_total += math.Max(hp_last_loop - hp_last_frame, 0)
   hp_last_loop = hp_
   best_time = loc.bestTime
   avg_time = loc.averageTime
@@ -63,8 +38,8 @@ var pos_x = 0
 var screen_x = 0
 var relative_x = 0
 
-var hp_ = maxhp_
-var hp_last_frame = maxhp_
+var hp_ = maxhp
+var hp_last_frame = maxhp
 var lost_hp = 0
 var armor_ = 0.0
 var buffs_count = 0
@@ -113,9 +88,10 @@ var loc_begin_or_loop = true
 
 
 func on_start_frame()
+  disable npcDialog
   ai_enabled = ai.enabled & !(ai.paused)
   is_walking = ai.walking
-  can_activate_item = can_activate()
+  can_activate_item = item.CanActivate()
   can_activate_or_using_bardiche = (cd("bardiche") <= 0 | cd("bardiche") > 878) & ai_enabled & can_activate_item
   left_state = item.left.state
   right_state = item.right.state
@@ -126,7 +102,7 @@ func on_start_frame()
 
   hp_last_frame = hp_
   hp_ = hp
-  lost_hp = maxhp_ - hp_
+  lost_hp = maxhp - hp_
   armor_ = relu(armor + armor.f / 10.0)
   buffs_count = buffs.count
   buffs_string = buffs.string
@@ -136,15 +112,15 @@ func on_start_frame()
   debuffs_chill = (debuffs_string = "chill:")
   foe_ = foe
   foe_count = foe.count
-  all_foe_count = foe_count_within(200)
-  cur_screen_foe_count = foe_count_within(36 - relative_x)
+  all_foe_count = foe.GetCount(200)
+  cur_screen_foe_count = foe.GetCount(36 - relative_x)
   foe_distance = foe.distance
   foe_armor = foe.armor
   foe_hp = foe.hp
   foe_hp_and_armor = foe_hp + foe_armor
   foe_has_armor = foe_armor > 0
   foe_maxhp = foe.maxhp
-  foe_maxarmor = max(foe_armor, foe.maxarmor)
+  foe_maxarmor = math.Max(foe_armor, foe.maxarmor)
   foe_state_last_frame = foe_state
   foe_state = foe.state
   foe_state_changed = (foe_state ! foe_state_last_frame)
@@ -159,26 +135,26 @@ func on_start_frame()
   foe_debuff_I = (foe_debuff_string = "chill:")
 
   ?foe_debuff_I
-    foe_debuff_I_count = int_parse(str_break(str_split(foe_debuff_string, "chill:")[1], 1)[0])
-    foe_debuff_I_time = int_parse(str_split(str_split(str_split(foe_debuff_string, "chill:")[1], ":")[1], ",")[0])
+    foe_debuff_I_count = int.Parse(string.Break(string.Split(foe_debuff_string, "chill:")[1], 1)[0])
+    foe_debuff_I_time = int.Parse(string.Split(string.Split(string.Split(foe_debuff_string, "chill:")[1], ":")[1], ",")[0])
   :
     foe_debuff_I_count = 0
     foe_debuff_I_time = 0
   ?foe_debuff_F
-    foe_debuff_F_time = int_parse(str_split(str_split(str_split(foe_debuff_string, "dot:")[1], ":")[1], ",")[0])
+    foe_debuff_F_time = int.Parse(string.Split(string.Split(string.Split(foe_debuff_string, "dot:")[1], ":")[1], ",")[0])
   :
     foe_debuff_F_time = 0
   ?foe_debuff_P
-    foe_debuff_P_time = int_parse(str_split(str_split(str_split(foe_debuff_string, "damage:")[1], ":")[1], ",")[0])
+    foe_debuff_P_time = int.Parse(string.Split(string.Split(string.Split(foe_debuff_string, "damage:")[1], ":")[1], ",")[0])
   :
     foe_debuff_P_time = 0
 
   total_time_last_frame = total_time
-  total_time = totaltime  
+  total_time = totaltime
   ?total_time > total_time_last_frame
     true_total_time += total_time - total_time_last_frame  //make up for the skills such as blade
   :
-    true_total_time++  
+    true_total_time++
   loc_begin = (true_total_time = 1)
   loc_loop = (total_time = 1) & (true_total_time > 1)
   loc_begin_or_loop = loc_begin | loc_loop
@@ -235,14 +211,14 @@ func activate_potion()
 /* ------------ string functions ------------ */
 func pad_left(str, l)
   str = str + ""
-  var pad_len = l - str_size(str)
+  var pad_len = l - string.Size(str)
   var pad = str_repeat(" ", pad_len)
   return pad + str
 
 
 func pad_right(str, l)
   str = str + ""
-  var pad_len = l - str_size(str)
+  var pad_len = l - string.Size(str)
   var pad = str_repeat(" ", pad_len)
   return str + pad
 
@@ -250,7 +226,7 @@ func str_repeat(str, n)
   ?n < 1
     return ""
   var result = ""
-  n = min(floor(n), 100)
+  n = math.Min(floor(n), 100)
   for i = 1..n
     result += str
   return result
@@ -266,15 +242,15 @@ func create_ui(ui_, x, y, w)
   return ui_
 
 func relu(num)
-  return max(num, 0)
+  return math.Max(num, 0)
 
 func create_healthbar(start_text, ticks, current, cap, color_min, color_max, color_BG, end_text)
-  current = max(current, 1)
+  current = math.Max(current, 1)
   var healthbar = []
   var full_ticks = (0.0+current-1)/cap*ticks + 0.5
-  var has_half_tick = round_to_int(full_ticks - floor(full_ticks))
+  var has_half_tick = math.RoundToInt(full_ticks - floor(full_ticks))
   var half_tick = str_repeat("▒", has_half_tick)
-  var color_current = color_lerp(color_min, color_max, (0.0+current)/cap)
+  var color_current = color.Lerp(color_min, color_max, (0.0+current)/cap)
   healthbar.Add([color_BG, start_text])
   healthbar.Add([color_current, str_repeat("█", floor(full_ticks)) + half_tick, ticks])
   healthbar.Add([color_BG, end_text])

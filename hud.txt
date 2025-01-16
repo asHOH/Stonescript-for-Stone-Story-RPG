@@ -80,7 +80,7 @@ func _info_color(info)
 /* ------------- initialization ------------- */
 // run at loc.begin
 func init()
-  _hud_on = !(s.loc_ = "uulaa_shop" | s.loc_ = "undead_crypt_intro" | loc.isQuest)
+  _hud_on = !(loc = "uulaa_shop" | loc = "undead_crypt_intro" | loc.isQuest)
   ?show_state_lister
     state_lister.on_begin_or_loop()
 
@@ -119,7 +119,7 @@ func draw(strategy, eq_type)
 
 /* ------------------- hud ------------------ */
 func draw_hud(strategy, eq_type)
-  s.draw_Bg(0, 1, palette.ddark_gray,s.screen_w, 5)
+  draw.Bg(0, 1, palette.ddark_gray,screen.w, 5)
 
   var indent = 0
   ?show_potion_button
@@ -131,7 +131,7 @@ func draw_hud(strategy, eq_type)
   var line4 = []
   var line5 = []
 
-  line1.Add([palette.yellow, s.loc_name+" "+s.loc_stars+"☆ ", 16])
+  line1.Add([palette.yellow, loc.name+" "+loc.stars+"☆ ", 16])
 
   ?s.all_foe_count > 0
     ?show_foe_distance
@@ -144,12 +144,12 @@ func draw_hud(strategy, eq_type)
       line2.Add([palette.orange, "away"])
 
     ?show_foe_full_name
-      var foe_infos = s.str_break(s.foe_, s.screen_w - 17 - indent)
+      var foe_infos = string.Break(s.foe_, screen.w - 17 - indent)
       line1.Add([palette.red, foe_infos[0]])
       ?foe_infos.Count() > 1
         line2.Add([palette.red, " " + foe_infos[1]])
     :
-      line1.Add([palette.red, s.str_split(s.foe_)[0]])
+      line1.Add([palette.red, string.Split(s.foe_)[0]])
   : // no foe
     line2.Add([palette.orange, "", 16])
 
@@ -177,7 +177,7 @@ func draw_hud(strategy, eq_type)
       line5.Add([palette.red, " Avg.HP lost/now: ", 16])
       line5.Add([palette.red, _hp_lost_per_loop, 2])
       line5.Add([palette.red, "/"])
-      line5.Add([palette.red, s.max(s.hp_last_loop - s.hp_, 0), 2])
+      line5.Add([palette.red, math.Max(s.hp_last_loop - s.hp_, 0), 2])
 
   ?show_hud_text
     printer.print_lines(indent, 1, [line1, line2, line3, line4, line5])
@@ -185,15 +185,15 @@ func draw_hud(strategy, eq_type)
 /* ---------------- healthbar --------------- */
 func draw_healthbar()
   ?show_healthbar
-    var healthbar = s.create_healthbar("HP   [", healthbar_ticks, s.hp_, s.maxhp_, palette.dark_red, palette.dark_green, palette.gray, "]")
-    var armorbar = s.create_healthbar("Armor[", healthbar_ticks, s.armor_, s.maxhp_, palette.blue, palette.violet, palette.gray, "]")
-    printer.print_lines(0, s.screen_h - 3, [armorbar, healthbar])
+    var healthbar = s.create_healthbar("HP   [", healthbar_ticks, s.hp_, maxhp, palette.dark_red, palette.dark_green, palette.gray, "]")
+    var armorbar = s.create_healthbar("Armor[", healthbar_ticks, s.armor_, maxhp, palette.blue, palette.violet, palette.gray, "]")
+    printer.print_lines(0, screen.h - 3, [armorbar, healthbar])
 
   ?(!s.foe_) | (!show_enemy_healthbar)
     return
   var enemy_healthbar_y = -4
-  var enemy_healthbar_ticks = s.max(2, s.floor(s.log(s.foe_maxhp, 2)) - 1)
-  var enemy_armorbar_ticks = s.max(2, s.floor(s.log(s.foe_maxarmor, 2)) - 1)
+  var enemy_healthbar_ticks = math.Max(2, s.floor(math.Log(s.foe_maxhp, 2)) - 1)
+  var enemy_armorbar_ticks = math.Max(2, s.floor(math.Log(s.foe_maxarmor, 2)) - 1)
   var enemy_healthbar = s.create_healthbar("[", enemy_healthbar_ticks, s.foe_hp, s.foe_maxhp, palette.dark_red, palette.dark_green, palette.gray, "]")
   var enemy_armorbar = s.create_healthbar("[", enemy_armorbar_ticks, s.foe_armor, s.foe_maxarmor, palette.blue, palette.violet, palette.gray, "]")
   ?s.foe_armor > 0

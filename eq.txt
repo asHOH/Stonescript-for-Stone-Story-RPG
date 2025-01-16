@@ -76,9 +76,9 @@ func set_eq_type(type)
   eq_type = type
 
 func L(equipment)
-  ?equipment & !(s.str_equals(equipment, right_hand))
+  ?equipment & !(string.Equals(equipment, right_hand))
     left_hand = equipment
-  :?!(s.str_equals(equipment, universal_sword))
+  :?!(string.Equals(equipment, universal_sword))
     left_hand = universal_sword
   :
     left_hand = universal_sword2
@@ -86,9 +86,9 @@ func L(equipment)
 
 
 func R(equipment)
-  ?equipment & !(s.str_equals(equipment, left_hand))
+  ?equipment & !(string.Equals(equipment, left_hand))
     right_hand = equipment
-  :?!(s.str_equals(equipment, universal_sword))
+  :?!(string.Equals(equipment, universal_sword))
     right_hand = universal_sword
   :
     right_hand = universal_sword2

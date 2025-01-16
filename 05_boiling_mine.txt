@@ -3,7 +3,7 @@
 var util = import UserScript/util
 var s = import UserScript/s
 
-?s.loc_ = "mine"
+?loc = "mine"
   util.eq.element = "aether"
 
   // Boss room: ?loc = bronze_guardian
@@ -19,7 +19,7 @@ var s = import UserScript/s
         util.try_dodge()
   // Non-boss
   :
-    ?s.loc_stars <= 7
+    ?loc.stars <= 7
       util.blade_on = false
       util.speed_farming_strategy()
     :?(s.foe_ = "slave_master" & s.foe_ ! "big_slave_master") | s.foe_ = "big_slave_master" | s.foe_ = "fire_elemental" | s.foe_ = "walker" | s.foe_ = "fire_geyser"

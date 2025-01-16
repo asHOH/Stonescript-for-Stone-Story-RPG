@@ -4,7 +4,7 @@ var util = import UserScript/util
 var s = import UserScript/s
 var timer = import UserScript/timer
 
-?s.loc_ = "caves"
+?loc = "caves"
   util.eq.element = "ice"
   
   // Boss
@@ -37,7 +37,7 @@ var timer = import UserScript/timer
 
   // Non-boss
   :
-    ?s.loc_stars <= 5
+    ?loc.stars <= 5
       util.blade_on = false
       util.speed_farming_strategy()
     :?s.foe_ = "biter" | s.foe_ = "peeler" | s.foe_ = "caviar" | s.foe_ = "licker" | s.foe_ = "warmer" | s.foe_ = "chopper"

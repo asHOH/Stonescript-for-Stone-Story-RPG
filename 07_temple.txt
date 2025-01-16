@@ -3,7 +3,7 @@
 var util = import UserScript/util
 var s = import UserScript/s
 
-?s.loc_ = "temple"
+?loc = "temple"
 
   // Boss room: ?loc = nagaraja
   // Boss

@@ -14,7 +14,7 @@ var timer = new UserScript/timer
 var boss_atk_counter = new UserScript/timer
 var is_stunned = false
 
-?s.loc_ = "rocky"
+?loc = "rocky"
   /* ------------- set parameters ------------- */
   util.harvest_on = false
   util.autowalk_on = false

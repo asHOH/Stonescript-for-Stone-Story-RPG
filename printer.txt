@@ -18,11 +18,11 @@ func print_line(x, y, texts)
       cur_x++
     :?text.Count() = 2
       print(cur_x, y, text[0], text[1])
-      cur_x += s.str_size(text[1])
+      cur_x += string.Size(text[1])
     :
       var padded_text = s.pad_right(text[1], text[2])
       print(cur_x, y, text[0], padded_text)
-      cur_x += s.str_size(padded_text)
+      cur_x += string.Size(padded_text)
 
 func print_lines(x, y, textss)
   var cur_y = y
@@ -46,11 +46,11 @@ func print_line_on_foe(x, y, texts)
       cur_x++
     :?text.Count() = 2
       print_on_foe(cur_x, y, text[0], text[1])
-      cur_x += s.str_size(text[1])
+      cur_x += string.Size(text[1])
     :
       var padded_text = s.pad_right(text[1], text[2])
       print_on_foe(cur_x, y, text[0], padded_text)
-      cur_x += s.str_size(padded_text)
+      cur_x += string.Size(padded_text)
 
 func print_lines_on_foe(x, y, textss)
   var cur_y = y

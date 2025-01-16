@@ -36,7 +36,7 @@ func _set_strategy(str)
 
 // is true when foe is alone and can be slayed
 func _check_can_slay()
-  return s.foe_distance <= 23 & s.foe_distance > 0 & (!(s.foe_ = immune_to_physical)) & ((s.foe_count_within(29) = 1 & s.foe_hp_and_armor <= slay_threshold) | (s.foe_count_within(29) = 2 & s.foe_hp_and_armor <= slay_threshold / 3))
+  return s.foe_distance <= 23 & s.foe_distance > 0 & (!(s.foe_ = immune_to_physical)) & ((foe.GetCount(29) = 1 & s.foe_hp_and_armor <= slay_threshold) | (foe.GetCount(29) = 2 & s.foe_hp_and_armor <= slay_threshold / 3))
 
 
 /* ------------------ trys ------------------ */
@@ -68,25 +68,25 @@ func try_blade()
 
 func bladeDS()
   ?!_bladeDS_timer.is_active()
-    s.screen_next()
+    screen.Next()
     _bladeDS_timer.set(20)
   :
-    _bladeDS_timer.update() 
+    _bladeDS_timer.update()
     ?_bladeDS_timer.at(0)
       eq.blade()
-      s.screen_reset_offset()
+      screen.ResetOffset()
     :
       try_quarter_dash()
       try_dashing()
 
 func try_splash_mmelee()
-  ?s.foe_count_within(9) >= melee_spl_threshold | (eq.eq_type = "mmelee_spl" & s.right_state = 2)
+  ?foe.GetCount(9) >= melee_spl_threshold | (eq.eq_type = "mmelee_spl" & s.right_state = 2)
     eq.mmelee_spl()
     return true
   return false
 
 func try_splash_rranged()
-  ?s.foe_count_within(25) >= ranged_spl_threshold | (eq.eq_type = "rranged_spl" & s.right_state = 2) | s.foe_ = "immune_to_physical"
+  ?foe.GetCount(25) >= ranged_spl_threshold | (eq.eq_type = "rranged_spl" & s.right_state = 2) | s.foe_ = "immune_to_physical"
     eq.rranged_spl()
     return true
   return false
@@ -229,7 +229,7 @@ func mmelee_boss_strategy()
       eq.mmelee()
     :
       walk()
-    
+
 func ranged_boss_strategy()
   _set_strategy("ranged_boss")
   ?!(try_slay() | try_pickup())
@@ -268,7 +268,7 @@ func walk()
   // left hand
   ?cultist_walk_on & (s.has_pickup | (s.all_foe_count = 0 & s.pos_x > 200))
     equipL star
-  :?s.is_walking & s.lost_hp < s.maxhp_ / 2
+  :?s.is_walking & s.lost_hp < maxhp / 2
     equipL triskelion
   :?s.lost_hp > 0 & s.foe_distance > 18
     equipL ouroboros
@@ -328,7 +328,7 @@ func end_frame()
   ?s.hp_ <= potion_threshold
     activate potion
   ?s.loc_begin
-    _init()    
+    _init()
   ?s.loc_loop
     _on_loop()
   timer.update()

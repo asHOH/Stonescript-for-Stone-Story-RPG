@@ -3,7 +3,7 @@
 var util = import UserScript/util
 var s = import UserScript/s
 
-?s.loc_ = "forest"
+?loc = "forest"
   util.eq.element = "poison"
 
   // Boss room: ?loc = fungus_forest_boss  
@@ -25,4 +25,3 @@ var s = import UserScript/s
       util.mmelee_strategy()
     :?s.foe_
       util.report_unknown_foe()
-
