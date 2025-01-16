@@ -42,15 +42,13 @@ func _check_can_slay()
 /* ------------------ trys ------------------ */
 func try_quarter_dash()
   ?quarter_on & s.can_activate_now("quarterstaff")
-      eq.quarter_dash() // 5 distance
-      return true
+    return eq.quarter_dash() // 5 distance
   return false
 
 func try_dashing()
   //range is 11~16 inclusive
   ?dashing_on & foe.distance >= 11 & foe.distance <= 16 & s.can_activate_now("dashing")
-    eq.dashing() // goes to distance 3 from the enemy
-    return true
+    return eq.dashing() // goes to distance 3 from the enemy
   return false
 
 func try_blade()
@@ -59,11 +57,9 @@ func try_blade()
     return true
   :?blade_on & s.cur_screen_foe_count >= blade_threshold & s.can_activate_now("blade")
     ?foe.distance < 10
-      eq.blade()
-      return true
+      return eq.blade()
     :
-      try_quarter_dash()
-      try_dashing()
+      try_dashing() | try_quarter_dash()
   return false
 
 func bladeDS()
@@ -76,25 +72,21 @@ func bladeDS()
       eq.blade()
       screen.ResetOffset()
     :
-      try_quarter_dash()
-      try_dashing()
+      try_dashing() | try_quarter_dash()
 
 func try_splash_mmelee()
   ?foe.GetCount(9) >= melee_spl_threshold | (eq.eq_type = "mmelee_spl" & item.right.state = 2)
-    eq.mmelee_spl()
-    return true
+    return eq.mmelee_spl()
   return false
 
 func try_splash_rranged()
-  ?foe.GetCount(25) >= ranged_spl_threshold | (eq.eq_type = "rranged_spl" & item.right.state = 2) | foe_= "immune_to_physical"
-    eq.rranged_spl()
-    return true
+  ?foe.GetCount(25) >= ranged_spl_threshold | (eq.eq_type = "rranged_spl" & item.right.state = 2) | foe = "immune_to_physical"
+    return eq.rranged_spl()
   return false
 
 func try_pierce()
   ?s.foe_has_armor & foe.distance <= 7 & foe.distance > 0 & (eq.eq_type = "melee_prc" | item.right.state >= 3)
-    eq.melee_prc()
-    return true
+    return eq.melee_prc()
   return false
 
 func try_slay()
@@ -110,21 +102,18 @@ func try_slay()
 
 func try_bardiche()
   ?s.can_activate_or_use_bardiche & !s.debuffs_chill & foe.count > 0 & foe.distance > 0 & s.foe_hp_and_armor > 200 & buffs.string ! "berserk" & buffs.string ! "lucky"
-    eq.bardiche(true)
-    return true
+    return eq.bardiche(true)
   return false
 
 func try_pickup()
   ?s.has_pickup
-    eq.pick_up()
-    return true
+    return eq.pick_up()
   return false
 
 func try_dodge()
   ?s.can_activate_now("mind") // 15 distance back
     _set_strategy("dodge")
-    eq.dodge()
-    return true
+    return eq.dodge()
   return false
 
 func try_summon()
@@ -181,15 +170,15 @@ func try_walk()
 /* --------------- strategies --------------- */
 func inspect_weakness()
   // ∞>❄>φ>*>♥>∞
-  ?foe_= "poison"
+  ?foe = "poison"
     eq.element = "ice"
-  :?foe_= "ice"
+  :?foe = "ice"
     eq.element = "fire"
-  :?foe_= "fire"
+  :?foe = "fire"
     eq.element = "aether"
-  :?foe_= "aether"
+  :?foe = "aether"
     eq.element = "vigor"
-  :?foe_= "vigor"
+  :?foe = "vigor"
     eq.element = "poison"
   :
     eq.element = "none"
@@ -260,7 +249,7 @@ func walk()
     eq.R_sword()
   :?foe.distance <= 23 & s.ai_enabled
     eq.R_shield_A()
-  :?!eq.R_shield_auto(!s.ai_enabled)
+  :?!eq.R_compound_auto(!s.ai_enabled)
     equipL triskelion // range 10
     equipR ouroboros // range 17
     return
@@ -278,7 +267,7 @@ func walk()
     eq.L_sword()
 
 func report_unknown_foe()
-  >Unknown foe: @s.foe_@
+  >Unknown foe: @foe@
   eq.mmelee()
 
 

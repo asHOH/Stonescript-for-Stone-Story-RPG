@@ -20,13 +20,15 @@ var compound_shield_maxarmor_armor = 35
 var poison_shield_A = "poison shield 10* A"
 var ice_shield_A = "ice shield 10* A"
 var fire_shield_A = "fire shield 10* A"
-var aether_shield_A = "" // "aether shield 10* A"
+var aether_shield_A = "aether shield 10* A"
 var vigor_shield_A = "vigor shield 10* A"
 
 var shield_ah = "vigor shield 10* ah" // heal when hit
 var shield_ap = "poison shield 10* ap" // bonus damage when hit
 var shield_af = "fire shield 10* af" // burning damage when hit
 var shield_ai = "ice shield 10* ai" // slow when hit
+
+var shield_dodge = "aether shield 10* A shiny"
 
 /* ----------------- swords ----------------- */
 var poison_sword = "poison sword 10* D -big shiny"
@@ -67,6 +69,8 @@ var aether_crossbow = "aether crossbow 10*"
 var ice_crossbow = "ice crossbow 10*"
 var wand_dI = "ice wand 10* dI"
 var wand_dP = "poison wand 10* dP"
+var vigor_wand = "vigor wand *10"
+var aether_wand = "aether wand *10"
 
 func on_start_frame()
   left_hand = ""
@@ -83,6 +87,7 @@ func L(equipment)
   :
     left_hand = universal_sword2
   equipL @left_hand@
+  return true
 
 
 func R(equipment)
@@ -93,6 +98,7 @@ func R(equipment)
   :
     right_hand = universal_sword2
   equipR @right_hand@
+  return true
 
 
 /* -------------- normal shield ------------- */
@@ -104,158 +110,131 @@ func R_shield_A()
     R(fire_shield_A)
   :
     R_shield_ah()
+  return true
 
-func R_shield_maxarmor()
+func R_compound_maxarmor()
   R(compound_shield_maxarmor)
+  return true
 
 func shield_maxarmor()
   set_eq_type("maxarmor")
-  R_shield_maxarmor()
+  R_compound_maxarmor()
   L("quest")
+  return true
 
-func R_shield_regen()
+func R_compound_regen()
   R(compound_shield_regen)
+  return true
 
 func shield_regen()
   set_eq_type("max_regen")
-  R_shield_regen()
+  R_compound_regen()
   L("quest")
+  return true
 
-func R_shield_auto(quest_equipped)
+func R_compound_auto(quest_equipped)
   ?s.armor_ <= compound_shield_regen_armor | ((s.armor_ <= compound_shield_regen_armor + 2) & quest_equipped)
-    R_shield_regen()
-    return true
+    return R_compound_regen()
   :?s.armor_ <= compound_shield_maxarmor_armor | ((s.armor_ <= compound_shield_maxarmor_armor + 2) & quest_equipped)
-    R_shield_maxarmor()
-    return true
+    return R_compound_maxarmor()
   return false
 
 
 
 /* -------------- debuff shield ------------- */
 func R_shield_ah()
-  R(shield_ah)
+  return R(shield_ah)
 
 func R_shield_ap()
-  R(shield_ap)
+  return R(shield_ap)
 
 func R_shield_af()
-  R(shield_af)
+  return R(shield_af)
 
 func R_shield_ai()
-  R(shield_ai)
+  return R(shield_ai)
 
 
 /* ---------------- dps sword --------------- */
 func L_sword()
   ?element = "poison"
-    L(poison_sword)
-  :?element = "ice"
-    L(ice_sword)
-  :?element = "fire"
-    L(fire_sword)
-  :?element = "aether"
-    L(aether_sword)
-  :?element = "vigor"
-    L(vigor_sword)
-  :
-    L(best_sword)
+    return L(poison_sword)
+  ?element = "ice"
+    return L(ice_sword)
+  ?element = "fire"
+    return L(fire_sword)
+  ?element = "aether"
+    return L(aether_sword)
+  ?element = "vigor"
+    return L(vigor_sword)
+  return L(best_sword)
 
 func R_sword()
   ?element = "poison"
-    R(poison_sword)
-  :?element = "ice"
-    R(ice_sword)
-  :?element = "fire"
-    R(fire_sword)
-  :?element = "aether"
-    R(aether_sword)
-  :?element = "vigor"
-    R(vigor_sword)
-  :
-    R(best_sword)
+    return R(poison_sword)
+  ?element = "ice"
+    return R(ice_sword)
+  ?element = "fire"
+    return R(fire_sword)
+  ?element = "aether"
+    return R(aether_sword)
+  ?element = "vigor"
+    return R(vigor_sword)
+  return R(best_sword)
 
 func L_sword2()
   ?element = "poison"
-    L(poison_sword2)
-  :?element = "ice"
-    L(ice_sword2)
-  :?element = "fire"
-    L(fire_sword2)
-  :?element = "aether"
-    L(aether_sword2)
-  :?element = "vigor"
-    L(vigor_sword2)
-  :
-    L(best_sword2)
+    return L(poison_sword2)
+  ?element = "ice"
+    return L(ice_sword2)
+  ?element = "fire"
+    return L(fire_sword2)
+  ?element = "aether"
+    return L(aether_sword2)
+  ?element = "vigor"
+    return L(vigor_sword2)
+  return L(best_sword2)
 
 func R_sword2()
   ?element = "poison"
-    R(poison_sword2)
-  :?element = "ice"
-    R(ice_sword2)
-  :?element = "fire"
-    R(fire_sword2)
-  :?element = "aether"
-    R(aether_sword2)
-  :?element = "vigor"
-    R(vigor_sword2)
-  :
-    R(best_sword2)
+    return R(poison_sword2)
+  ?element = "ice"
+    return R(ice_sword2)
+  ?element = "fire"
+    return R(fire_sword2)
+  ?element = "aether"
+    return R(aether_sword2)
+  ?element = "vigor"
+    return R(vigor_sword2)
+  return R(best_sword2)
 
 /* -------------- debuff sword -------------- */
 func L_sword_dL()
-  L(sword_dL)
+  return L(sword_dL)
 
 func R_sword_dL()
-  R(sword_dL)
+  return R(sword_dL)
 
 func L_sword_dF()
-  L(sword_dF)
+  return L(sword_dF)
 
 func R_sword_dF()
-  R(sword_dF)
+  return R(sword_dF)
 
 func L_sword_dP()
-  L(sword_dP)
+  return L(sword_dP)
 
 func R_sword_dP()
-  R(sword_dP)
+  return R(sword_dP)
 
 func L_sword_dI()
-  L(sword_dI)
+  return L(sword_dI)
 
 func R_sword_dI()
-  R(sword_dI)
+  return R(sword_dI)
 
 /* ---------------- hammer --------------- */
-func L_hammer()
-  ?element = "poison"
-    L(poison_hammer)
-  :?element = "fire"
-    L(fire_hammer)
-  :?element = "aether"
-    L(aether_hammer)
-  :?element = "vigor"
-    L(vigor_hammer)
-  :?element = "ice"
-    L(ice_hammer)
-  :
-    L_sword()
-
-func R_hammer()
-  ?element = "poison"
-    R(poison_hammer)
-  :?element = "fire"
-    R(fire_hammer)
-  :?element = "aether"
-    R(aether_hammer)
-  :?element = "vigor"
-    R(vigor_hammer)
-  :?element = "ice"
-    R(ice_hammer)
-  :
-    R_sword()
+// unused
 
 /* ---------------- crossbow --------------- */
 
@@ -266,6 +245,7 @@ func crossbow()
     equip @ice_crossbow@
   :
     equip @repeating_crossbow@
+  return true
 
 /* ------------------ melee ----------------- */
 // double melee
@@ -273,17 +253,20 @@ func mmelee()
   set_eq_type("mmelee")
   L_sword()
   R_sword2()
+  return true
 
 // double splashing melee
 func mmelee_spl()
   rranged_spl() // big sword is bad...
   set_eq_type("mmelee_spl")
+  return true
 
 // piercing melee, i.e. Hammers. range = 5.
 func melee_prc()
   set_eq_type("melee_prc")
   L_hammer()
   R_sword()
+  return true
 
 /* ----------------- ranged ----------------- */
 // double ranged
@@ -291,29 +274,26 @@ func rranged()
   set_eq_type("rranged")
   // repeating crossbow is the best non-splashing ranged weapon in early game
   equip @repeating_crossbow@
+  return true
 
 // double splashing ranged
 func rranged_spl()
   set_eq_type("rranged_spl") // under development
-  equipL vigor wand *10
-  equipR aether wand *10
-
-/* ------------- armor generator ------------ */
-// func armor_gen()
-//   set_eq_type("armor_gen")
-//   ?element = "poison"
-//     equipL poison hammer *10 a
-//     equipR poison shield *10 A
+  L(vigor_wand)
+  R(aether_wand)
+  return true
 
 /* ------------ specific weapons ------------ */
 func blade()
   set_eq_type("blade!!")
   equip blade
   activate R
+  return true
 
 func blade_no_R()
   set_eq_type("blade")
   equip blade
+  return true
 
 func bardiche(use)
   equip bardiche *10
@@ -324,46 +304,53 @@ func bardiche(use)
       activate R
   :
     set_eq_type("bardiche")
+  return true
 
 func repeating()
   set_eq_type("repeating")
   equip @repeating_crossbow@
+  return true
 
 func pick_up()
   set_eq_type("pickup")
   equipL star
   equipR triskelion
+  return true
 
 func R_fire_talisman()
   set_eq_type("fire_talisman")
   equipR fire talisman
   activate R
-  // equipL aether talisman
-  // activate L
+  return true
 
 func R_aether_talisman()
   set_eq_type("aether_talisman")
   equipR aether talisman
   activate R
+  return true
 
 /* ------------- dash and dodge ------------- */
 func dashing()
   set_eq_type("dashing")
   equipR dashing shield
   L_sword()
+  return true
 
 
 func quarter_dash()
   set_eq_type("quarterstaff")
   equip quarterstaff
   activate R
+  return true
 
 
 func dodge()
   set_eq_type("dodge")
   equipL mind
-  equipR vigor shield *10 A
+  R(shield_dodge)
+  return true
 
 
 func R_cultist()
   R("cultist")
+  return true

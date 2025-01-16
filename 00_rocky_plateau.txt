@@ -67,7 +67,7 @@ func phase3()
     :?boss_atk_counter.at(1) & foe.state_at(32, 68)
       util.try_dodge()
       timer.set(2) // you'll be stunned on foe state 33,0 ~ 33,1
-      return  
+      return
   
   // action: dodge or attack
   ?timer.at(2)
@@ -110,7 +110,7 @@ func phase2()
   eq.L_sword()
   ?mask_run
     eq.R_cultist()
-  :   
+  :
     ?(foe.buffs.string = "buff") | !R_debuff_weapon()
       eq.R_sword2()
   
@@ -218,7 +218,7 @@ func defend_at(foe_time)
 
 func check_retreat()
   ?foe.count > 0 & foe.hp <= 0 & !mask_run
-    eq.R_shield_auto(false)
+    eq.R_compound_auto(false)
     equipL ouroboros
 
 func brew_potion()
