@@ -5,12 +5,12 @@ var s = import UserScript/s
 
 // last mission of Skeleton_arm. recommended to use in deadwood.
 func skeleton_arm()
-  ?s.cd("skeleton_arm") <= 15 & s.can_activate_item & s.foe_distance <= 22 & s.foe_hp_and_armor <= 110 & s.foe_ ! immune_to_physical
+  ?s.cd("skeleton_arm") <= 15 & s.can_activate_item & foe.distance <= 22 & s.foe_hp_and_armor <= 110 & foe ! immune_to_physical
     equip skeleton arm
     ?s.foe_hp_and_armor <= 10 & item.CanActivate("skeleton_arm")
       activate R
 
 // third mission of Skeleton_arm. Actually easy if you try to use blade to defeat non-boss foes in every level, but slaying the boss might help!
 func blade()
-  ?s.foe_ = "boss" & s.foe_hp_and_armor <= 95 & s.can_activate_now("blade")
+  ?foe = "boss" & s.foe_hp_and_armor <= 95 & s.can_activate_now("blade")
     eq.blade()

@@ -319,7 +319,7 @@ func bardiche(use)
   equip bardiche *10
   ?use
     set_eq_type("bardiche!")
-    ?s.can_activate_or_using_bardiche
+    ?s.can_activate_or_use_bardiche
       set_eq_type("bardiche!!")
       activate R
   :

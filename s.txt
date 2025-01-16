@@ -30,44 +30,24 @@ func on_loop()
 var ai_enabled = false
 var is_walking = false
 var can_activate_item = false
-var can_activate_or_using_bardiche = false
-var left_state = 0
-var right_state = 0
+var can_activate_or_use_bardiche = false
 var has_pickup = false
-var pos_x = 0
-var screen_x = 0
 var relative_x = 0
 
 var hp_ = maxhp
 var hp_last_frame = maxhp
 var lost_hp = 0
 var armor_ = 0.0
-var buffs_count = 0
-var buffs_string = ""
-var buffs_smite = 0
-var debuffs_count = 0
-var debuffs_string = ""
 var debuffs_chill = false
 
-var foe_ = ""
-var foe_count = 0
 var all_foe_count = 0
 var cur_screen_foe_count = 0
-var foe_distance = 0
-var foe_armor = 0
-var foe_hp = 0
 var foe_hp_and_armor = 0
 var foe_has_armor = false
-var foe_maxhp = 0
 var foe_maxarmor = 0
 var foe_state_last_frame = 0
 var foe_state = 0
 var foe_state_changed = false
-var foe_time = 0
-var foe_buff_count = 0
-var foe_buff_string = ""
-var foe_debuff_count = 0
-var foe_debuff_string = ""
 var foe_debuff_f = false
 var foe_debuff_F = false
 var foe_debuff_P = false
@@ -82,8 +62,6 @@ var loop_count = 1
 var total_time_last_frame = 0
 var total_time = 0
 var true_total_time = 0
-var loc_begin = true
-var loc_loop = false
 var loc_begin_or_loop = true
 
 
@@ -92,60 +70,40 @@ func on_start_frame()
   ai_enabled = ai.enabled & !(ai.paused)
   is_walking = ai.walking
   can_activate_item = item.CanActivate()
-  can_activate_or_using_bardiche = (cd("bardiche") <= 0 | cd("bardiche") > 878) & ai_enabled & can_activate_item
-  left_state = item.left.state
-  right_state = item.right.state
+  can_activate_or_use_bardiche = (cd("bardiche") <= 0 | cd("bardiche") > 878) & ai_enabled & can_activate_item
   has_pickup = pickup.distance < 10
-  pos_x = pos.x
-  screen_x = screen.x
-  relative_x = pos_x - screen_x
+  relative_x = pos.x - screen.x
 
   hp_last_frame = hp_
   hp_ = hp
   lost_hp = maxhp - hp_
   armor_ = relu(armor + armor.f / 10.0)
-  buffs_count = buffs.count
-  buffs_string = buffs.string
-  buffs_smite = (buffs_string = "smite:")
-  debuffs_count = debuffs.count
-  debuffs_string = debuffs.string
-  debuffs_chill = (debuffs_string = "chill:")
-  foe_ = foe
-  foe_count = foe.count
+  debuffs_chill = (debuffs.string = "chill:")
   all_foe_count = foe.GetCount(200)
   cur_screen_foe_count = foe.GetCount(36 - relative_x)
-  foe_distance = foe.distance
-  foe_armor = foe.armor
-  foe_hp = foe.hp
-  foe_hp_and_armor = foe_hp + foe_armor
-  foe_has_armor = foe_armor > 0
-  foe_maxhp = foe.maxhp
-  foe_maxarmor = math.Max(foe_armor, foe.maxarmor)
+  foe_hp_and_armor = foe.hp + foe.armor
+  foe_has_armor = foe.armor > 0
+  foe_maxarmor = math.Max(foe.armor, foe.maxarmor)
   foe_state_last_frame = foe_state
   foe_state = foe.state
   foe_state_changed = (foe_state ! foe_state_last_frame)
-  foe_time = foe.time
-  foe_buff_count = foe.buffs.count
-  foe_buff_string = foe.buffs.string
-  foe_debuff_count = foe.debuffs.count
-  foe_debuff_string = foe.debuffs.string
-  foe_debuff_f = (foe_debuff_string = "dot_2:")
-  foe_debuff_F = (foe_debuff_string = "dot:")
-  foe_debuff_P = (foe_debuff_string = "damage:")
-  foe_debuff_I = (foe_debuff_string = "chill:")
+  foe_debuff_f = (foe.debuffs.string = "dot_2:")
+  foe_debuff_F = (foe.debuffs.string = "dot:")
+  foe_debuff_P = (foe.debuffs.string = "damage:")
+  foe_debuff_I = (foe.debuffs.string = "chill:")
 
   ?foe_debuff_I
-    foe_debuff_I_count = int.Parse(string.Break(string.Split(foe_debuff_string, "chill:")[1], 1)[0])
-    foe_debuff_I_time = int.Parse(string.Split(string.Split(string.Split(foe_debuff_string, "chill:")[1], ":")[1], ",")[0])
+    foe_debuff_I_count = int.Parse(string.Break(string.Split(foe.debuffs.string, "chill:")[1], 1)[0])
+    foe_debuff_I_time = int.Parse(string.Split(string.Split(string.Split(foe.debuffs.string, "chill:")[1], ":")[1], ",")[0])
   :
     foe_debuff_I_count = 0
     foe_debuff_I_time = 0
   ?foe_debuff_F
-    foe_debuff_F_time = int.Parse(string.Split(string.Split(string.Split(foe_debuff_string, "dot:")[1], ":")[1], ",")[0])
+    foe_debuff_F_time = int.Parse(string.Split(string.Split(string.Split(foe.debuffs.string, "dot:")[1], ":")[1], ",")[0])
   :
     foe_debuff_F_time = 0
   ?foe_debuff_P
-    foe_debuff_P_time = int.Parse(string.Split(string.Split(string.Split(foe_debuff_string, "damage:")[1], ":")[1], ",")[0])
+    foe_debuff_P_time = int.Parse(string.Split(string.Split(string.Split(foe.debuffs.string, "damage:")[1], ":")[1], ",")[0])
   :
     foe_debuff_P_time = 0
 
@@ -155,9 +113,7 @@ func on_start_frame()
     true_total_time += total_time - total_time_last_frame  //make up for the skills such as blade
   :
     true_total_time++
-  loc_begin = (true_total_time = 1)
-  loc_loop = (total_time = 1) & (true_total_time > 1)
-  loc_begin_or_loop = loc_begin | loc_loop
+  loc_begin_or_loop = (total_time = 1)
 
   ?loc_loop
     on_loop()
@@ -168,10 +124,10 @@ func can_activate_now(item_name)
   return cd(item_name) <= 0 & ai_enabled & can_activate_item
 
 func foe_state_at(s, t)
-  return foe_state = s & foe_time = t
+  return foe_state = s & foe.time = t
 
 func foe_state_between(s, t1, t2)
-  return foe_state = s & foe_time >= t1 & foe_time <= t2
+  return foe_state = s & foe.time >= t1 & foe.time <= t2
 
 func brew_potion(potion_name)
   ?!loc_begin_or_loop

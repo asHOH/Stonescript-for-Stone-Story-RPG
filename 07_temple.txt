@@ -7,13 +7,13 @@ var s = import UserScript/s
 
   // Boss room: ?loc = nagaraja
   // Boss
-  ?s.foe_ = "boss"
+  ?foe = "boss"
     ?debuffs.count >= 4
       util.poisoning_boss_strategy()
     :
       util.ranged_boss_strategy()
   :
-    ?s.foe_ = "serpent_handler" | s.foe_ = "flying_serpent" | s.foe_ = "ground_serpent" | s.foe_ = "cult_marksman" | s.foe_ = "heavy_hitter" | s.foe_ = "cult_guard" | s.foe_ = "cult_sorcerer" | s.foe_ = "worm_rider" | s.foe_ = "poison_adept"
+    ?foe = "serpent_handler" | foe = "flying_serpent" | foe = "ground_serpent" | foe = "cult_marksman" | foe = "heavy_hitter" | foe = "cult_guard" | foe = "cult_sorcerer" | foe = "worm_rider" | foe = "poison_adept"
       util.rranged_strategy()
-    :?s.foe_
+    :?foe
       util.report_unknown_foe()

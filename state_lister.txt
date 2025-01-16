@@ -67,15 +67,15 @@ func draw()
     check_and_show_foe_buffs()
 
   ?state_list.Count()
-    ?s.foe_state ! state_list[0][0]
-      state_list.Insert(0,[s.foe_state, s.foe_time])
+    ?foe.state ! state_list[0][0]
+      state_list.Insert(0,[foe.state, foe.time])
       check_list_max()
       update_text()
-    :?s.foe_time ! state_list[0][1]
-      state_list[0].Emplace(1, s.foe_time)
+    :?foe.time ! state_list[0][1]
+      state_list[0].Emplace(1, foe.time)
       update_cur_state_text()
-  :?s.foe_distance < 28
-    state_list.Add([s.foe_state, s.foe_time])
+  :?foe.distance < 28
+    state_list.Add([foe.state, foe.time])
     update_text()
 
   ?event_recorder.Count()
@@ -84,29 +84,29 @@ func draw()
 func check_and_show_damage()
   var hp_and_armor = s.hp_ + s.armor_
   ?hp_and_armor + 0.5 < hp_and_armor_last_frame
-    event_recorder.Add(["Got " + math.RoundToInt(10*(hp_and_armor_last_frame - hp_and_armor))/10.0 + " damage at: ", s.foe_state, s.foe_time, s.total_time])
+    event_recorder.Add(["Got " + math.RoundToInt(hp_and_armor_last_frame - hp_and_armor) + " damage at: ", foe.state, foe.time, s.total_time])
     update_event_display()
   hp_and_armor_last_frame = hp_and_armor
 
 func check_and_show_healing()
   ?s.hp_ > s.hp_last_frame
-    event_recorder.Add(["Healed " + (s.hp_ - s.hp_last_frame) + " hp at: ", s.foe_state, s.foe_time, s.total_time])
+    event_recorder.Add(["Healed " + (s.hp_ - s.hp_last_frame) + " hp at: ", foe.state, foe.time, s.total_time])
     update_event_display()
 
 func check_and_show_debuffs()
-  ?s.debuffs_count > debuff_count_last_frame
-    event_recorder.Add(["Got debuff at: ", s.foe_state, s.foe_time, s.total_time])
+  ?debuffs.count > debuff_count_last_frame
+    event_recorder.Add(["Got debuff at: ", foe.state, foe.time, s.total_time])
     update_event_display()
-  debuff_count_last_frame = s.debuffs_count
+  debuff_count_last_frame = debuffs.count
 
 func check_and_show_foe_buffs()
-  ?s.foe_buff_count > foe_buff_count_last_frame
-    event_recorder.Add(["Foe got buff at: ", s.foe_state, s.foe_time, s.total_time])
+  ?foe.buffs.count > foe_buff_count_last_frame
+    event_recorder.Add(["Foe got buff at: ", foe.state, foe.time, s.total_time])
     update_event_display()
-  :?s.foe_buff_count < foe_buff_count_last_frame
-    event_recorder.Add(["Foe lost buff at: ", s.foe_state, s.foe_time, s.total_time])
+  :?foe.buffs.count < foe_buff_count_last_frame
+    event_recorder.Add(["Foe lost buff at: ", foe.state, foe.time, s.total_time])
     update_event_display()
-  foe_buff_count_last_frame = s.foe_buff_count
+  foe_buff_count_last_frame = foe.buffs.count
 
 
 func update_text()
@@ -117,7 +117,7 @@ func update_text()
   state_list_text.text = temp_text
 
 func update_cur_state_text()
-  cur_state_text.text = s.pad_right(s.foe_state, 2) + "," + s.foe_time
+  cur_state_text.text = s.pad_right(foe.state, 2) + "," + foe.time
 
 func update_event_display()
   var temp_text = ""

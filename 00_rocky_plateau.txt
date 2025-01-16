@@ -31,15 +31,15 @@ var is_stunned = false
 
   ?s.loc_begin_or_loop
     boss_atk_counter.set(3)
-  ?!timer.between(0,1) & s.foe_distance > 16
+  ?!timer.between(0,1) & foe.distance > 16
     util.walk()
   :?timer.between(0,1) | (!util.try_dashing()) // timer 2 is the dodge moment. wait 2 frames then dash back.
-    ?s.foe_distance < 11
-      ?s.foe_ = "phase1"        
+    ?foe.distance < 11
+      ?foe = "phase1"
         phase1()
-      :?s.foe_ = "phase2"
+      :?foe = "phase2"
         phase2()
-      :?s.foe_ = "phase3"
+      :?foe = "phase3"
         phase3()
       :
         scout()
@@ -52,19 +52,19 @@ func phase3()
   inspect_weakness_phase3()
   >`0,17,boss_atk_counter@boss_atk_counter.t@
   // determine: when to dodge
-  ?(!s.can_activate_or_using_bardiche) & (!permapot)
+  ?(!s.can_activate_or_use_bardiche) & (!permapot)
     s.activate_potion()
-  ?s.foe_state = 115 // satellite
-    ?s.foe_state_changed
+  ?foe.state = 115 // satellite
+    ?foe.state_changed
       timer.set(79)
     boss_atk_counter.set(3)
-  :?s.foe_state = 32
-    ?s.foe_state_changed
+  :?foe.state = 32
+    ?foe.state_changed
       boss_atk_counter.update()
     :?!boss_atk_counter.at(1)
       ?defend_at(89)
         return
-    :?boss_atk_counter.at(1) & s.foe_state_at(32, 68)
+    :?boss_atk_counter.at(1) & foe.state_at(32, 68)
       util.try_dodge()
       timer.set(2) // you'll be stunned on foe state 33,0 ~ 33,1
       return  
@@ -111,7 +111,7 @@ func phase2()
   ?mask_run
     eq.R_cultist()
   :   
-    ?(s.foe_buff_string = "buff") | !R_debuff_weapon()
+    ?(foe.buffs.string = "buff") | !R_debuff_weapon()
       eq.R_sword2()
   
   defend_at(59)
@@ -140,7 +140,7 @@ func L_debuff_weapon()
   ?s.foe_debuff_I_count < 6 | s.foe_debuff_I_time < 6
     eq.L_sword_dI()
     return true
-  ?(!s.foe_debuff_P) & (s.foe_ ! "phase3" | (s.foe_ = "phase3" & s.foe_state = 32 & s.foe_time >= 55))
+  ?(!s.foe_debuff_P) & (foe ! "phase3" | (foe = "phase3" & foe.state = 32 & foe.time >= 55))
     eq.L_sword_dP()
     return true
   ?s.lost_hp >= 60
@@ -161,7 +161,7 @@ func R_debuff_weapon()
   ?s.foe_debuff_I_count < 6 | s.foe_debuff_I_time < 6
     eq.R_sword_dI()
     return true
-  ?(!s.foe_debuff_P) & (s.foe_ ! "phase3" | (s.foe_ = "phase3" & s.foe_state = 32 & s.foe_time >= 55))
+  ?(!s.foe_debuff_P) & (foe ! "phase3" | (foe = "phase3" & foe.state = 32 & foe.time >= 55))
     eq.R_sword_dP()
     return true
   ?s.lost_hp >= 60
@@ -177,13 +177,13 @@ func R_debuff_weapon()
 
 func inspect_weakness_phase3()
   // ∞>❄>φ>*>♥>∞
-  ?s.foe_buff_string ! "ice"
+  ?foe.buffs.string ! "ice"
     eq.element = "ice"
-  :?s.foe_buff_string ! "fire"
+  :?foe.buffs.string ! "fire"
     eq.element = "fire"
-  :?s.foe_buff_string ! "aether"
+  :?foe.buffs.string ! "aether"
     eq.element = "aether"
-  :?s.foe_buff_string ! "vigor"
+  :?foe.buffs.string ! "vigor"
     eq.element = "vigor"
   :
     eq.element = "poison"
@@ -191,13 +191,13 @@ func inspect_weakness_phase3()
 
 func inspect_another_weakness_phase3()
   // ∞>❄>φ>*>♥>∞
-  ?s.foe_buff_string ! "ice" & eq.element ! "ice"
+  ?foe.buffs.string ! "ice" & eq.element ! "ice"
     eq.element = "ice"
-  :?s.foe_buff_string ! "fire" & eq.element ! "fire"
+  :?foe.buffs.string ! "fire" & eq.element ! "fire"
     eq.element = "fire"
-  :?s.foe_buff_string ! "aether" & eq.element ! "aether"
+  :?foe.buffs.string ! "aether" & eq.element ! "aether"
     eq.element = "aether"
-  :?s.foe_buff_string ! "vigor" & eq.element ! "vigor"
+  :?foe.buffs.string ! "vigor" & eq.element ! "vigor"
     eq.element = "vigor"
   :
     eq.element = "poison"
@@ -217,7 +217,7 @@ func defend_at(foe_time)
   return false
 
 func check_retreat()
-  ?s.foe_count > 0 & s.foe_hp <= 0 & !mask_run
+  ?foe.count > 0 & foe.hp <= 0 & !mask_run
     eq.R_shield_auto(false)
     equipL ouroboros
 
@@ -229,6 +229,6 @@ func brew_potion()
     s.brew_potion("berserk")
 
 func check_stunned()
-  ?s.debuffs_string = "stun" & !is_stunned
-    hud.perma_show(0, 12, "Stunned at timer" + timer.t + ", fs" + s.foe_state + ", " + s.foe_time + ", totaltime" + s.total_time)
+  ?debuffs.string = "stun" & !is_stunned
+    hud.perma_show(0, 12, "Stunned at timer" + timer.t + ", fs" + foe.state + ", " + foe.time + ", totaltime" + s.total_time)
     is_stunned = true

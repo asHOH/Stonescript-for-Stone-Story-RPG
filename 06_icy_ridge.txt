@@ -10,12 +10,12 @@ var s = import UserScript/s
   ?s.loc_begin_or_loop
     fighting_boss = false
   // Boss
-  ?s.foe_ = "boss"
+  ?foe = "boss"
     fighting_boss = true
     ?loc.stars <= 5
-      ?s.foe_distance <= 2
+      ?foe.distance <= 2
         util.mmelee_strategy()
-      :?s.foe_distance <= 4
+      :?foe.distance <= 4
         // Shovel has range of 1. standing close will avoid snowball attacks.
         equip shovel
       :?(!util.try_quarter_dash())
@@ -26,16 +26,16 @@ var s = import UserScript/s
 
   // Non-boss or ice pillar in boss fight
   :
-    ?(s.foe_ = "ice_elemental" & s.foe_ ! "ice_elemental_elite") | s.foe_ = "ice_elemental_elite" | s.foe_ = "ki"
+    ?(foe = "ice_elemental" & foe ! "ice_elemental_elite") | foe = "ice_elemental_elite" | foe = "ki"
       util.rranged_strategy()
-    :?s.foe_ = "ice_pillar" | s.foe_ = "ice_wall"
+    :?foe = "ice_pillar" | foe = "ice_wall"
       ?!fighting_boss
         util.mmelee_strategy()
       :
-        ?s.foe_distance <= 11
+        ?foe.distance <= 11
           util.eq.blade_no_R()
         :
           util.try_quarter_dash()
           util.try_dashing()
-    :?s.foe_
+    :?foe
       util.report_unknown_foe()

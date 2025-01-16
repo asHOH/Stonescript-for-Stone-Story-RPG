@@ -7,12 +7,12 @@ var s = import UserScript/s
   util.eq.element = "vigor"
 
   // Boss
-  ?s.foe_ = "phase1" | s.foe_ = "phase2"
+  ?foe = "phase1" | foe = "phase2"
     util.rranged_strategy()
 
   // Non-boss
   :
-    ?(s.foe_ = "skeleton" & s.foe_ ! "large_skeleton") | s.foe_ = "large_skeleton" | (s.foe_ = "ghost" & s.foe_ ! "large_ghost" & s.foe_ ! "ghost_tomb") | s.foe_ = "large_ghost" | s.foe_ = "ghost_tomb" | s.foe_ = "decorator"
+    ?(foe = "skeleton" & foe ! "large_skeleton") | foe = "large_skeleton" | (foe = "ghost" & foe ! "large_ghost" & foe ! "ghost_tomb") | foe = "large_ghost" | foe = "ghost_tomb" | foe = "decorator"
       util.rranged_strategy()
-    :?s.foe_
+    :?foe
       util.report_unknown_foe()

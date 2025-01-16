@@ -8,21 +8,21 @@ var s = import UserScript/s
 
   // Boss room: ?loc = bronze_guardian
   // Boss
-  ?s.foe_ = "boss"
+  ?foe = "boss"
     util.slay_threshold = 0
-    ?s.foe_state >= 2 // Guardian is attackable
-      ?s.foe_distance > 8
+    ?foe.state >= 2 // Guardian is attackable
+      ?foe.distance > 8
         util.eq.crossbow()
       :
         util.mmelee_strategy()
-      ?s.foe_state = 32 & s.foe_time = 32 // Guardian hit on time 33(?)
+      ?foe.state = 32 & foe.time = 32 // Guardian hit on time 33(?)
         util.try_dodge()
   // Non-boss
   :
     ?loc.stars <= 7
       util.blade_on = false
       util.speed_farming_strategy()
-    :?(s.foe_ = "slave_master" & s.foe_ ! "big_slave_master") | s.foe_ = "big_slave_master" | s.foe_ = "fire_elemental" | s.foe_ = "walker" | s.foe_ = "fire_geyser"
+    :?(foe = "slave_master" & foe ! "big_slave_master") | foe = "big_slave_master" | foe = "fire_elemental" | foe = "walker" | foe = "fire_geyser"
       util.mmixed_strategy()
-    :?s.foe_
+    :?foe
       util.report_unknown_foe()
