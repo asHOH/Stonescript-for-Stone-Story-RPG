@@ -172,12 +172,12 @@ func draw_hud(strategy, eq_type)
     line5.Add([palette.cyan, "loop/now  time: ", 16])
     line5.Add([palette.cyan, _frame_per_loop, 5])
     line5.Add([palette.cyan, "/"])
-    line5.Add([palette.cyan, s.total_time, 5])
+    line5.Add([palette.cyan, totaltime, 5])
     ?show_hp_lost
       line5.Add([palette.red, " Avg.HP lost/now: ", 16])
       line5.Add([palette.red, _hp_lost_per_loop, 2])
       line5.Add([palette.red, "/"])
-      line5.Add([palette.red, math.Max(s.hp_last_loop - s.hp_, 0), 2])
+      line5.Add([palette.red, math.Max(s.hp_last_loop - hp, 0), 2])
 
   ?show_hud_text
     printer.print_lines(indent, 1, [line1, line2, line3, line4, line5])

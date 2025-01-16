@@ -310,9 +310,8 @@ func _reset_public_variables()
 
 // executed at the end of frame only in all.txt
 func end_frame()
-  ?!try_harvest()
-    try_walk()
-  ?s.hp_ <= potion_threshold
+  s.do_nothing(try_harvest() | try_walk())
+  ?hp <= potion_threshold
     activate potion
   ?loc.begin
     _init()

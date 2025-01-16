@@ -189,6 +189,9 @@ func str_repeat(str, n)
 
 
 /* ------------- Other functions ------------ */
+func do_nothing(x)
+  return x
+
 func create_ui(ui_, x, y, w)
   ui_.x = x
   ui_.y = y

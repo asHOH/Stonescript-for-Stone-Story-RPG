@@ -29,7 +29,7 @@ var state_list_box
 var state_list_text
 var cur_state_text
 var event_text
-var hp_and_armor_last_frame = s.hp_ + s.armor_
+var hp_and_armor_last_frame = hp + s.armor_
 var event_recorder = []
 var debuff_count_last_frame = 0
 var foe_buff_count_last_frame = 0
@@ -82,29 +82,29 @@ func draw()
     check_event_time()
 
 func check_and_show_damage()
-  var hp_and_armor = s.hp_ + s.armor_
+  var hp_and_armor = hp + s.armor_
   ?hp_and_armor + 0.5 < hp_and_armor_last_frame
-    event_recorder.Add(["Got " + math.RoundToInt(hp_and_armor_last_frame - hp_and_armor) + " damage at: ", foe.state, foe.time, s.total_time])
+    event_recorder.Add(["Got " + math.RoundToInt(hp_and_armor_last_frame - hp_and_armor) + " damage at: ", foe.state, foe.time, totaltime])
     update_event_display()
   hp_and_armor_last_frame = hp_and_armor
 
 func check_and_show_healing()
-  ?s.hp_ > s.hp_last_frame
-    event_recorder.Add(["Healed " + (s.hp_ - s.hp_last_frame) + " hp at: ", foe.state, foe.time, s.total_time])
+  ?hp > s.hp_last_frame
+    event_recorder.Add(["Healed " + (hp - s.hp_last_frame) + " hp at: ", foe.state, foe.time, totaltime])
     update_event_display()
 
 func check_and_show_debuffs()
   ?debuffs.count > debuff_count_last_frame
-    event_recorder.Add(["Got debuff at: ", foe.state, foe.time, s.total_time])
+    event_recorder.Add(["Got debuff at: ", foe.state, foe.time, totaltime])
     update_event_display()
   debuff_count_last_frame = debuffs.count
 
 func check_and_show_foe_buffs()
   ?foe.buffs.count > foe_buff_count_last_frame
-    event_recorder.Add(["Foe got buff at: ", foe.state, foe.time, s.total_time])
+    event_recorder.Add(["Foe got buff at: ", foe.state, foe.time, totaltime])
     update_event_display()
   :?foe.buffs.count < foe_buff_count_last_frame
-    event_recorder.Add(["Foe lost buff at: ", foe.state, foe.time, s.total_time])
+    event_recorder.Add(["Foe lost buff at: ", foe.state, foe.time, totaltime])
     update_event_display()
   foe_buff_count_last_frame = foe.buffs.count
 
@@ -126,7 +126,7 @@ func update_event_display()
   event_text.text = temp_text
 
 func check_event_time()
-  ?event_recorder[0][3] + event_display_time < s.total_time
+  ?event_recorder[0][3] + event_display_time < totaltime
     event_recorder.RemoveAt(0)
     update_event_display()
 

@@ -230,5 +230,5 @@ func brew_potion()
 
 func check_stunned()
   ?debuffs.string = "stun" & !is_stunned
-    hud.perma_show(0, 12, "Stunned at timer" + timer.t + ", fs" + foe.state + ", " + foe.time + ", totaltime" + s.total_time)
+    hud.perma_show(0, 12, "Stunned at timer" + timer.t + ", fs" + foe.state + ", " + foe.time + ", totaltime" + totaltime)
     is_stunned = true

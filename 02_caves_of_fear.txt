@@ -14,7 +14,7 @@ var timer = import UserScript/timer
       ?foe.distance >= 17
         util.walk() // make distance 16 so dashing shield can be used immediately. 17 is actally OK.
       ?foe.state = 2
-        >@foe.distance@, @s.total_time@
+        >@foe.distance@, @totaltime@
       ?foe.state = 33 & !timer.is_active() // set countdown
         timer.set(30)
       : // act based on countdown
