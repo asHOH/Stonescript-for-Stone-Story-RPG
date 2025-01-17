@@ -10,7 +10,7 @@ The scripts work well for game version v4.8.1 as of 2025-01-17.
 ## Usage
 
 1. Clone this repository as a subfolder of the Stonescript directory called `UserScript`.
-   The cloning command should look like: (remember to modify <Steam ID>)
+   The cloning command should look like: (remember to modify Steam ID!)
 
    ```bash
    cd %AppData%\LocalLow\Martian Rex, Inc_\Stone Story\<Steam ID>\Stonescript
