@@ -29,7 +29,7 @@ var _perma_show_info = []
 
 /* ----------------- colors ----------------- */
 func _strategy_color(strategy)
-  ?strategy = "speed_farming"
+  ?strategy = "speed_farming" | strategy = "retreat"
     return palette.green
   ?strategy = "walk" | strategy = "shovel" | strategy = "hatchet"
     return palette.gray
@@ -48,7 +48,7 @@ func _strategy_color(strategy)
 func _eq_type_color(eq_type)
   ?eq_type = "walk" | eq_type = "shovel" | eq_type = "hatchet"
     return palette.gray
-  ?eq_type = "mmelee"
+  ?eq_type = "mmelee" | eq_type = "moondial"
     return palette.orange
   ?eq_type = "rranged"
     return palette.blue
@@ -124,7 +124,7 @@ func draw_hud(strategy, eq_type)
   var indent = 0
   ?show_potion_button
     indent = 9
-  
+
   var line1 = []
   var line2 = []
   var line3 = []
@@ -200,4 +200,3 @@ func draw_healthbar()
     printer.print_lines_on_foe(0, enemy_healthbar_y - 1, [enemy_armorbar, enemy_healthbar])
   :
     printer.print_lines_on_foe(0, enemy_healthbar_y, [enemy_healthbar])
-  

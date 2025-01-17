@@ -115,7 +115,7 @@ func on_start_frame()
     true_total_time++
   loc_begin_or_loop = (total_time = 1)
 
-  ?loc_loop
+  ?loc.loop
     on_loop()
     loop_count++
 

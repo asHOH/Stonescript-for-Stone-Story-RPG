@@ -10,6 +10,7 @@ var element = "none" // target element of equipment
 var eq_type = "none" // current type of equipment set
 var left_hand = "" // current left hand equipment
 var right_hand = "" // current right hand equipment
+var moondial_time = 0
 
 /* ----------------- shields ---------------- */
 var compound_shield_regen = "compound shield *10 shiny"
@@ -55,10 +56,10 @@ var best_sword2 = fire_sword2 // second best DPS sword
 
 /* ----------------- hammers ---------------- */
 var poison_hammer = "poison hammer 10* D"
-var ice_hammer = "" // "ice hammer 10* D"
+var ice_hammer = "ice hammer 10* D"
 var fire_hammer = "fire hammer 10* D"
-var aether_hammer = "" // "aether hammer 10* D"
-var vigor_hammer = "" // "vigor hammer 10* D"
+var aether_hammer = "aether hammer 10* D"
+var vigor_hammer = "vigor hammer 10* D"
 
 var best_hammer = poison_hammer // best DPS hammer
 var best_hammer2 = fire_hammer // second best DPS hammer
@@ -133,7 +134,7 @@ func shield_regen()
   return true
 
 func R_compound_auto(quest_equipped)
-  ?s.armor_ <= compound_shield_regen_armor | ((s.armor_ <= compound_shield_regen_armor + 2) & quest_equipped)
+  ?s.armor_ < compound_shield_regen_armor | ((s.armor_ < compound_shield_regen_armor + 2) & quest_equipped)
     return R_compound_regen()
   :?s.armor_ <= compound_shield_maxarmor_armor | ((s.armor_ <= compound_shield_maxarmor_armor + 2) & quest_equipped)
     return R_compound_maxarmor()
@@ -234,7 +235,31 @@ func R_sword_dI()
   return R(sword_dI)
 
 /* ---------------- hammer --------------- */
-// unused
+func L_hammer()
+  ?element = "poison"
+    return L(poison_hammer)
+  ?element = "ice"
+    return L(ice_hammer)
+  ?element = "fire"
+    return L(fire_hammer)
+  ?element = "aether"
+    return L(aether_hammer)
+  ?element = "vigor"
+    return L(vigor_hammer)
+  return L_sword()
+
+func R_hammer()
+  ?element = "poison"
+    return R(poison_hammer)
+  ?element = "ice"
+    return R(ice_hammer)
+  ?element = "fire"
+    return R(fire_hammer)
+  ?element = "aether"
+    return R(aether_hammer)
+  ?element = "vigor"
+    return R(vigor_hammer)
+  return R_sword()
 
 /* ---------------- crossbow --------------- */
 
@@ -261,7 +286,7 @@ func mmelee_spl()
   set_eq_type("mmelee_spl")
   return true
 
-// piercing melee, i.e. Hammers. range = 5.
+// piercing melee, i.e. Hammers (range = 5)
 func melee_prc()
   set_eq_type("melee_prc")
   L_hammer()
@@ -353,4 +378,22 @@ func dodge()
 
 func R_cultist()
   R("cultist")
+  return true
+
+/* --------------- moondialing -------------- */
+func moondialing()
+  ?!(left_hand = "sword" & right_hand = "sword")
+    return false
+
+  set_eq_type("moondial")
+  ?moondial_time % 3 = 0
+    equipR @right_hand@
+    equipL moondial
+  :?moondial_time % 3 = 1
+    equipR @left_hand@
+    equipL moondial
+  :
+    equipR @right_hand@
+    equipL @left_hand@
+  moondial_time++
   return true

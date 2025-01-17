@@ -16,6 +16,7 @@ var is_stunned = false
 
 ?loc = "rocky"
   /* ------------- set parameters ------------- */
+  util.moondialing = true
   util.harvest_on = false
   util.autowalk_on = false
   ?mask_run
@@ -49,22 +50,23 @@ var is_stunned = false
   phase 3: Mind stone when it shields or uses orbital laser. Weak to all elements but gains resistance buff each time it shields. */
 
 func phase3()
+  util._set_strategy("phase3")
   inspect_weakness_phase3()
   >`0,17,boss_atk_counter@boss_atk_counter.t@
   // determine: when to dodge
   ?(!s.can_activate_or_use_bardiche) & (!permapot)
     s.activate_potion()
   ?foe.state = 115 // satellite
-    ?foe.state_changed
+    ?s.foe_state_changed
       timer.set(79)
     boss_atk_counter.set(3)
   :?foe.state = 32
-    ?foe.state_changed
+    ?s.foe_state_changed
       boss_atk_counter.update()
     :?!boss_atk_counter.at(1)
       ?defend_at(89)
         return
-    :?boss_atk_counter.at(1) & foe.state_at(32, 68)
+    :?boss_atk_counter.at(1) & s.foe_state_at(32, 68)
       util.try_dodge()
       timer.set(2) // you'll be stunned on foe state 33,0 ~ 33,1
       return
@@ -72,10 +74,8 @@ func phase3()
   // action: dodge or attack
   ?timer.at(2)
     util.try_dodge()
-  :?mask_run
-    eq.R_cultist()
-    ?!L_debuff_weapon()
-      eq.L_sword()
+  :?try_mask_run()
+    return
   :?permapot | !util.try_bardiche()
     ?s.foe_has_armor
       eq.L(eq.best_hammer)
@@ -85,94 +85,78 @@ func phase3()
       inspect_another_weakness_phase3()
       ?!R_debuff_weapon()
         eq.R_sword()
-    
+
 
 func phase1()
+  util._set_strategy("phase1")
   eq.element = "fire"
-  ?mask_run
-    eq.R_cultist()
-    ?!L_debuff_weapon()
-      eq.L_sword()
-  :
+  ?!try_mask_run()
     ?!permapot & util.try_bardiche()
       return
-    :
-      eq.L_sword()
-      ?!R_debuff_weapon()
-        eq.R_sword2()
+    eq.L_sword()
+    ?!R_debuff_weapon()
+      eq.R_sword2()
       
   defend_at(64)
   check_retreat()
 
 
 func phase2()
+  util._set_strategy("phase2")
   util.inspect_weakness()
   eq.L_sword()
   ?mask_run
     eq.R_cultist()
-  :
-    ?(foe.buffs.string = "buff") | !R_debuff_weapon()
+  :?(foe.buffs.string = "buff") | !R_debuff_weapon()
       eq.R_sword2()
   
   defend_at(59)
   check_retreat()
 
+
 func scout()
+  util._set_strategy("scout")
   eq.element = "none"
-  ?mask_run
-    eq.R_cultist()
-    ?!L_debuff_weapon()
-      eq.L_sword()
-  :
+  ?!try_mask_run()
     ?!permapot & util.try_bardiche()
       return
-    :
-      eq.L(eq.best_sword)
-      ?!R_debuff_weapon()
-        eq.R_sword()
+    eq.L(eq.best_sword)
+    ?!R_debuff_weapon()
+      eq.R_sword()
 
   defend_at(54)
 
+
 func L_debuff_weapon()
-  ?s.foe_debuff_F_time < 5
-    eq.L_sword_dF()
-    return true
+  ?s.foe_debuff_F_time < 3
+    return eq.L_sword_dF()
   ?s.foe_debuff_I_count < 6 | s.foe_debuff_I_time < 6
-    eq.L_sword_dI()
-    return true
+    return eq.L_sword_dI()
   ?(!s.foe_debuff_P) & (foe ! "phase3" | (foe = "phase3" & foe.state = 32 & foe.time >= 55))
-    eq.L_sword_dP()
-    return true
+    util.moondialing = false // dP is not atk speed enchanted
+    return eq.L_sword_dP()
   ?s.lost_hp >= 60
-    eq.L_sword_dL()
-    return true
+    return eq.L_sword_dL()
   ?s.foe_has_armor
-    eq.L(eq.best_hammer2)
-    return true
+    return eq.L(eq.best_hammer2)
   ?s.lost_hp >= 15
-    eq.L_sword_dL()
-    return true
+    return eq.L_sword_dL()
   return false
 
 func R_debuff_weapon()
-  ?s.foe_debuff_F_time < 5
-    eq.R_sword_dF()
-    return true
+  ?s.foe_debuff_F_time < 3
+    return eq.R_sword_dF()
   ?s.foe_debuff_I_count < 6 | s.foe_debuff_I_time < 6
-    eq.R_sword_dI()
-    return true
+    return eq.R_sword_dI()
   ?(!s.foe_debuff_P) & (foe ! "phase3" | (foe = "phase3" & foe.state = 32 & foe.time >= 55))
-    eq.R_sword_dP()
-    return true
+    util.moondialing = false // dP is not atk speed enchanted
+    return eq.R_sword_dP()
   ?s.lost_hp >= 60
-    eq.R_sword_dL()
-    return true
+    return eq.R_sword_dL()
   ?s.foe_has_armor
-    eq.R(eq.best_hammer2)
-    return true
+    return eq.R(eq.best_hammer2)
   ?s.lost_hp >= 20
-    eq.R_sword_dL()
-    return true
+    return eq.R_sword_dL()
   return false
 
 func inspect_weakness_phase3()
@@ -220,6 +204,7 @@ func check_retreat()
   ?foe.count > 0 & foe.hp <= 0 & !mask_run
     eq.R_compound_auto(false)
     equipL ouroboros
+    util._set_strategy("retreat")
 
 func brew_potion()
   ?permapot
@@ -232,3 +217,10 @@ func check_stunned()
   ?debuffs.string = "stun" & !is_stunned
     hud.perma_show(0, 12, "Stunned at timer" + timer.t + ", fs" + foe.state + ", " + foe.time + ", totaltime" + totaltime)
     is_stunned = true
+
+func try_mask_run()
+  ?mask_run
+    eq.R_cultist()
+    ?!L_debuff_weapon()
+      eq.L_sword()
+  return mask_run

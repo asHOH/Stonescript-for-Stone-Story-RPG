@@ -4,7 +4,7 @@ var hud = import UserScript/hud
 var s = import UserScript/s
 var mission = import UserScript/mission
 
-/* ------------ public variables ------------ */
+/* ---------- modifiable variables ---------- */
 var quarter_on = true // turn off when you need to save cd for quarterstaff
 var dashing_on = true // turn off when dashing may cause danger
 var blade_on = true // turn off when farming easy stages (due to lengthy animation)
@@ -16,7 +16,9 @@ var blade_threshold = 10 // when foe count >= this, activate the blade
 var melee_spl_threshold = 2 // when foe count nearby >= this, equip the splashing version of melee
 var ranged_spl_threshold = 3 // when foe count nearby >= this, equip the splashing version of ranged
 var talisman_element = "fire" // element to summon, "fire"/"aether"/"none"
+var moondialing = true // turn on only when the swords in both hands are +21 atk speed enchantment
 
+/* ------------ public variables ------------ */
 var autowalk_on = true // turn off when using special strategies when there is no enemy. Updates to true frame-wise.
 var cultist_walk_on = false // turn on when doing maskrun. Updates to false frame-wise.
 var timer = import UserScript/timer
@@ -302,7 +304,7 @@ func _reset_public_variables()
   blade_on = true
   harvest_on = true
   potion_threshold = 0
-  slay_threshold = 91
+  slay_threshold = 112
   bladeDS_threshold = 17
   blade_threshold = 10
   melee_spl_threshold = 2
@@ -311,6 +313,8 @@ func _reset_public_variables()
 // executed at the end of frame only in all.txt
 func end_frame()
   s.do_nothing(try_harvest() | try_walk())
+  ?moondialing
+    eq.moondialing()
   ?hp <= potion_threshold
     activate potion
   ?loc.begin
